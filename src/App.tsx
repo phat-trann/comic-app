@@ -29,8 +29,10 @@ function App() {
         ) : (
           comics.map((el: any) => (
             <div key={el._id} className={style.div}>
-              <img src={el.avatar} className={style.image} />
-              <p className={style.name}>{el.hashName}</p>
+              <div>
+                <img src={el.avatar} className={style.image} />
+                <p className={style.name}>{el.name}</p>
+              </div>
             </div>
           ))
         )}
