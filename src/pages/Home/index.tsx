@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import style from './home.module.css';
 
 function Home() {
   const [comics, setComics] = useState<null | any>(null);
@@ -11,7 +10,7 @@ function Home() {
     (async () => {
       setLoading(true);
       const results: { error: boolean; data: any } = await axios.get(
-        `${import.meta.env.VITE_HOST}/comic/search?limit=10`
+        `${import.meta.env.VITE_HOST}/comic/search?limit=50`
       );
 
       if (!results?.error && !results?.data?.error) {
@@ -22,38 +21,20 @@ function Home() {
   }, []);
 
   return (
-    <div className={style.app}>
-      <div className={style.main}>
+    <div className="bg-sky-700 px-4 py-2 text-white hover:bg-sky-800 sm:px-8 sm:py-3">
+      <div className="">
         {loading || !comics ? (
           <p>Loading</p>
         ) : (
           comics.map((el: any) => (
-            <div key={el._id} className={style.div}>
-              <div>
-                <img src={el.avatar} className={style.image} />
-                <p className={style.name}>Name: {el.name}</p>
-                <p className={style.name}>
-                  Another name: {el.anotherName.join(', ')}
-                </p>
-                <p className={style.name}>Artists: {el.artists.join(', ')}</p>
-                <p className={style.name}>Authors: {el.authors.join(', ')}</p>
-                <p className={style.name}>Description: {el.description}</p>
-                <p className={style.name}>Category: {el.category.join(', ')}</p>
-                <p className={style.name}>
-                  Status: {el.isDone ? 'Done' : 'In Progress'}
-                </p>
-                <p className={style.name}>Views: {el.views}</p>
-                <p className={style.name}>Followers: {el.followers}</p>
-                <p className={style.name}>Chapters: {el.chapters.length}</p>
-                {el.chapters.map((ell: any) => (
-                  <div key={ell._id}>
-                    <Link to={`/${ell.hashName}`}>
-                      {ell.name} - {ell.views} views - {ell.updateDate}
-                    </Link>
-                  </div>
-                ))}
+            <Link to={`/${el.hashName}`}>
+              <div key={el._id} className="">
+                <div>
+                  <img src={el.avatar} className="" />
+                  <p className="">{el.name}</p>
+                </div>
               </div>
-            </div>
+            </Link>
           ))
         )}
       </div>
