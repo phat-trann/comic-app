@@ -1,6 +1,6 @@
 import { useRoutes } from 'react-router-dom';
 import Layout from '../layouts';
-import { Chapters, Home } from '../pages';
+import { Chapters, ComicDetail, Home } from '../pages';
 
 const Routes = () => {
   return useRoutes([
@@ -10,6 +10,10 @@ const Routes = () => {
         {
           path: '/',
           element: <Home />,
+        },
+        {
+          path: '/:id',
+          element: <ComicDetail />
         },
         {
           path: '/:id/:chap',
