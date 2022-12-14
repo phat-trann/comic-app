@@ -21,20 +21,20 @@ function Home() {
   }, []);
 
   return (
-    <div className="bg-sky-700 px-4 py-2 text-white hover:bg-sky-800 sm:px-8 sm:py-3">
-      <div className="">
+    <div className="w-screen">
+      <div className="flex w-full flex-wrap">
         {loading || !comics ? (
           <p>Loading</p>
         ) : (
           comics.map((el: any) => (
-            <Link to={`/${el.hashName}`}>
-              <div key={el._id} className="">
+            <div key={el._id} className="w-1/6">
+              <Link to={`/${el.hashName}`}>
                 <div>
                   <img src={el.avatar} className="" />
                   <p className="">{el.name}</p>
                 </div>
-              </div>
-            </Link>
+              </Link>
+            </div>
           ))
         )}
       </div>
