@@ -3,6 +3,25 @@ import { useWindowSize } from '~/hooks';
 import ChevronLeft from '~/icons/ChevronLeft';
 import ChevronRight from '~/icons/ChevronRight';
 
+const ArrowLink = ({
+  onClick,
+  link,
+  isMobile,
+  children,
+}: {
+  onClick: (event: React.MouseEvent<HTMLAnchorElement>, link?: number) => void;
+  link?: number;
+  isMobile: boolean;
+  children: JSX.Element;
+}) => (
+  <a
+    className={`btn-circle btn pointer-events-auto h-8 min-h-0 w-8${isMobile ? ' invisible' : ''}`}
+    onClick={(event) => onClick(event, link)}
+  >
+    {children}
+  </a>
+);
+
 const Carousel = <T,>({
   id,
   dataList,
@@ -12,61 +31,80 @@ const Carousel = <T,>({
   dataList: T[];
   render: (arg: [T, number, string, string]) => ReactElement;
 }) => {
-  const [leftLink, setLeftLink] = useState();
-  const [rightLink, setRightLink] = useState('#1');
+  const [leftLink, setLeftLink] = useState<number>(0);
+  const [rightLink, setRightLink] = useState<number>(0);
   const carousel = useRef<HTMLDivElement | null>(null);
-  const [windowSize, currentBreakPoint] = useWindowSize();
+  const [windowSize, currentBreakPoint, breakPointConfig] = useWindowSize();
+  const isMobile = currentBreakPoint < breakPointConfig['md'];
 
-  const handleScroll = (e) => {
-    console.log(e);
+  const dataCarousel = (): [number, (arg: number) => number] => {
+    const items = carousel.current?.querySelectorAll('.carousel-item');
+    const firstItem = items?.[0];
+
+    if (!firstItem) return [-1, (number: number) => number];
+
+    const firstItemData = firstItem.getBoundingClientRect();
+    const itemWidth = firstItemData.width;
+    const itemInScreen = Math.floor(windowSize?.width ? windowSize.width / itemWidth : 0);
+    const maxNumber = (currentNumber: number) =>
+      currentNumber <= items.length - 1 ? currentNumber : items.length - 1;
+
+    return [itemInScreen, maxNumber];
   };
 
-  // useEffect(() => {
-  //   // const autoTimeout = setTimeout(() => {
-  //   //   console.log(autoTimeout);
-  //   // }, 1000);
+  const calculateCarousel = () => {
+    const items = carousel.current?.querySelectorAll('.carousel-item');
 
-  //   console.log(carousel.current);
+    if (!items) return;
 
-  //   if (carousel.current) {
-  //     carousel.current.addEventListener('scroll:carousel', handleScroll, true);
-  //   }
+    const [itemInScreen, maxNumber] = dataCarousel();
+    for (const [index, item] of items.entries()) {
+      if (item) {
+        const data = item.getBoundingClientRect();
 
-  //   return () => {
-  //     // clearTimeout(autoTimeout);
-  //     carousel.current?.removeEventListener('scroll:carousel', handleScroll);
-  //   };
-  // });
-
-  const handleGoToSection = (event: React.MouseEvent<HTMLAnchorElement>, link?: string) => {
-    event.preventDefault();
-
-    console.log(link);
+        if (index === 0 && data.x >= 0) {
+          setLeftLink(-1);
+          setRightLink(maxNumber(itemInScreen * 2 - 2));
+          break;
+        } else if (data.x >= 0) {
+          setLeftLink(index - itemInScreen + 1 > 0 ? index - itemInScreen + 1 : 0);
+          setRightLink(maxNumber(itemInScreen * 2 + index - 3));
+          break;
+        }
+      }
+    }
   };
+
+  const handleScroll = () => {
+    calculateCarousel();
+  };
+
+  const handleGoToSection = (event?: React.MouseEvent<HTMLAnchorElement>, link?: number) => {
+    event && event.preventDefault();
+
+    const currentItem = document.querySelector(`#${[id, link].join('-')}`);
+    currentItem && currentItem.scrollIntoView();
+  };
+
+  useEffect(() => {
+    const [itemInScreen, maxNumber] = dataCarousel();
+    setRightLink(maxNumber(itemInScreen * 2 - 3));
+  }, []);
+
   return (
     <div className="relative flex w-full flex-wrap">
-      <div className="carousel-center carousel w-screen" onScroll={handleScroll}>
+      <div className="carousel-center carousel w-screen" ref={carousel} onScroll={handleScroll}>
         {dataList.map((comic: T, index: number) =>
-          render([comic, index, [id, index + 1].join('-'), 'carousel-item ']),
+          render([comic, index, [id, index].join('-'), 'carousel-item ']),
         )}
       </div>
       <div className="pointer-events-none absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
-        <a
-          className={`btn-circle btn pointer-events-auto h-8 min-h-0 w-8${
-            !leftLink || currentBreakPoint < 2 ? ' invisible' : ''
-          }`}
-          onClick={(e) => handleGoToSection(e, leftLink)}
-        >
+        <ArrowLink isMobile={isMobile} link={leftLink} onClick={handleGoToSection}>
           <ChevronLeft />
-        </a>
-        <a
-          className={`btn-circle btn pointer-events-auto h-8 min-h-0 w-8${
-            !rightLink || currentBreakPoint < 2 ? ' invisible' : ''
-          }`}
-          onClick={(e) => handleGoToSection(e, rightLink)}
-        >
+        </ArrowLink>
+        <ArrowLink isMobile={isMobile} link={rightLink} onClick={handleGoToSection}>
           <ChevronRight />
-        </a>
+        </ArrowLink>
       </div>
     </div>
   );
