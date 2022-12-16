@@ -19,4 +19,6 @@ export interface comicDataType {
   views: number;
   followers: number;
   chapters: Array<chapterType>;
+  chaptersLength: number;
+  lastUpload: number;
 }

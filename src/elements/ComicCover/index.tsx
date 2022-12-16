@@ -4,7 +4,7 @@ import { LOADING_TEXT } from '~/common/constants';
 import { changeWidthImageUrl, diffDate, formatView } from '~/common/helpers/formatData';
 import { comicDataType, chapterType } from '~/common/types';
 import Views from '~/icons/Views';
-import ImageSkeleton from '~/components/ImageSkeleton';
+import ImageSkeleton from '../ImageSkeleton';
 
 const TitleInside: React.FC<{ name?: string }> = ({ name }) => (
   <div className="absolute bottom-0 h-7 w-full bg-gradient-to-b from-transparent to-gray-900 text-white">
@@ -39,8 +39,8 @@ const TitleOutside: React.FC<{ lastChapter?: chapterType; name?: string }> = ({
 
 const ComicCover: React.FC<{
   comicData: comicDataType | null;
-  showNewest: boolean;
-}> = ({ comicData, showNewest }) => {
+  showNewest?: boolean;
+}> = ({ comicData, showNewest = false }) => {
   const [lastChapter, setLastChapter] = useState<chapterType>();
 
   useEffect(() => {
@@ -48,14 +48,14 @@ const ComicCover: React.FC<{
   }, [comicData?.chapters]);
 
   return (
-    <div className="p-4">
-      <div className="overflow-hidden	rounded-lg">
+    <div className="w-full p-4">
+      <div className="overflow-hidden rounded-lg">
         <Link to={`/${comicData?.hashName || ''}`}>
           <div>
             <div className="relative flex h-60 items-center justify-center overflow-hidden md:h-48">
               {comicData ? (
                 <img
-                  src={changeWidthImageUrl(comicData.avatar, 500)}
+                  src={changeWidthImageUrl(comicData.avatar, 150)}
                   className="h-full w-full object-cover"
                 />
               ) : (
