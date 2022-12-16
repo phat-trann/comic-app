@@ -22,7 +22,7 @@ function Home() {
     <div className="w-100">
       <div className="flex w-full flex-wrap">
         {comics.map((comic, index) => (
-          <div key={comic?._id || index} className="w-1/12">
+          <div key={comic?._id || index} className="w-1/2 md:w-1/12">
             <ComicCover comicData={comic} showNewest={index > 11} />
           </div>
         ))}
