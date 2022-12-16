@@ -1,42 +1,31 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { comicDataType } from '../../common/types';
+import ComicCover from '../../elements/ComicCover';
 
 function Home() {
-  const [comics, setComics] = useState<null | any>(null);
-  const [loading, setLoading] = useState(false);
+  const [comics, setComics] = useState<null[] | comicDataType[]>(new Array(48).fill(null));
 
   useEffect(() => {
     (async () => {
-      setLoading(true);
-      const results: { error: boolean; data: any } = await axios.get(
-        `${import.meta.env.VITE_HOST}/comic/search?limit=50`
+      const { data }: { data: { error: boolean; data: comicDataType[] } } = await axios.get(
+        `${import.meta.env.VITE_HOST}/comic/search?limit=48`,
       );
 
-      if (!results?.error && !results?.data?.error) {
-        setLoading(false);
-        setComics(results.data.data);
+      if (!data?.error) {
+        setComics(data.data);
       }
     })();
   }, []);
 
   return (
-    <div className="w-screen">
+    <div className="w-100">
       <div className="flex w-full flex-wrap">
-        {loading || !comics ? (
-          <p>Loading</p>
-        ) : (
-          comics.map((el: any) => (
-            <div key={el._id} className="w-1/6">
-              <Link to={`/${el.hashName}`}>
-                <div>
-                  <img src={el.avatar} className="" />
-                  <p className="">{el.name}</p>
-                </div>
-              </Link>
-            </div>
-          ))
-        )}
+        {comics.map((comic, index) => (
+          <div key={comic?._id || index} className="w-1/12">
+            <ComicCover comicData={comic} showNewest={false} />
+          </div>
+        ))}
       </div>
     </div>
   );

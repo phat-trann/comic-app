@@ -30,4 +30,14 @@ const diffDate: (firstDate: number, secondDate: number) => string = (
   return floorDateTime(minuteDiff, 'minute');
 };
 
-export { diffDate, formatView };
+const changeWidthImageUrl = (currentUrl: string, width: number) => {
+  const url = new URL(currentUrl);
+  const searchParams = url.searchParams;
+
+  searchParams.set('width', String(width));
+  url.search = searchParams.toString();
+
+  return url.toString();
+};
+
+export { diffDate, formatView, changeWidthImageUrl };
