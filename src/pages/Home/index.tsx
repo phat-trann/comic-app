@@ -1,10 +1,10 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { comicDataType } from '../../common/types';
-import ComicCover from '../../elements/ComicCover';
+import { comicDataType } from '~/common/types';
+import ComicCover from '~/elements/ComicCover';
 
 function Home() {
-  const [comics, setComics] = useState<null[] | comicDataType[]>(new Array(48).fill(null));
+  const [comics, setComics] = useState<Array<null | comicDataType>>(new Array(48).fill(null));
 
   useEffect(() => {
     (async () => {
@@ -23,7 +23,7 @@ function Home() {
       <div className="flex w-full flex-wrap">
         {comics.map((comic, index) => (
           <div key={comic?._id || index} className="w-1/12">
-            <ComicCover comicData={comic} showNewest={false} />
+            <ComicCover comicData={comic} showNewest={index > 11} />
           </div>
         ))}
       </div>

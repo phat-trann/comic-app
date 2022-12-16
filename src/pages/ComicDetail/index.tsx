@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { diffDate, formatView } from '../../common/helpers/formatData';
+import { diffDate, formatView } from '~/common/helpers/formatData';
 
 function Home() {
   const { id } = useParams();

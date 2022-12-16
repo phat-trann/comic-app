@@ -1,7 +1,7 @@
-const formatView = (viewNumber: number) => {
-  return `${new Intl.NumberFormat().format(viewNumber)} view${
-    viewNumber > 1 ? 's' : ''
-  }`;
+const formatView = (viewNumber: number, hideText: boolean = false) => {
+  const formatViewNumber = new Intl.NumberFormat().format(viewNumber);
+  if (hideText) return formatViewNumber;
+  return `${new Intl.NumberFormat().format(viewNumber)} view${viewNumber > 1 ? 's' : ''}`;
 };
 
 const floorDateTime = (dateNumber: number, dateType: string) => {
@@ -9,10 +9,7 @@ const floorDateTime = (dateNumber: number, dateType: string) => {
   return `${dateNumber} ${dateType}${dateNumber > 1 ? 's' : ''} ago`;
 };
 
-const diffDate: (firstDate: number, secondDate: number) => string = (
-  firstDate,
-  secondDate
-) => {
+const diffDate: (firstDate: number, secondDate: number) => string = (firstDate, secondDate) => {
   const firstDateConvert = new Date(firstDate);
   const secondDateConvert = new Date(secondDate);
   const diffInTime = secondDateConvert.getTime() - firstDateConvert.getTime();
