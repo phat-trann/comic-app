@@ -12,7 +12,7 @@ const getABCComic = async (
   });
 };
 
-const getMostViewedComic = async (
+const getMostViewedComics = async (
   limit: number,
 ): Promise<AxiosResponse<{ error: boolean; data: comicDataType[] }, null>> => {
   return await api.get(`/comic/search`, {
@@ -26,5 +26,5 @@ const getMostViewedComic = async (
 
 export default {
   getABCComic,
-  getMostViewedComic,
+  getMostViewedComics,
 };

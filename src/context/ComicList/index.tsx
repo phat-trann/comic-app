@@ -1,10 +1,21 @@
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useEffect, useReducer } from 'react';
 import { comicDataType } from '~/common/types';
 import comicService from '~/services/comic.service';
 
-const initialState = {
+interface stateType {
+  comics: comicDataType[] | null[];
+  mostViewedComics: comicDataType[] | null[];
+}
+
+interface actionType {
+  type: string;
+  comics?: comicDataType[];
+  mostViewedComics?: comicDataType[];
+}
+
+const initialState: stateType = {
   comics: [...new Array(50).fill(null)],
-  mostViewedComic: [...new Array(40).fill(null)],
+  mostViewedComics: [...new Array(40).fill(null)],
 };
 
 export const context = React.createContext(initialState);
@@ -14,17 +25,17 @@ const ComicListContext = ({ children }: { children: JSX.Element }) => {
     LOAD_COMICS: 'LOAD_COMICS',
     LOAD_MOST_VIEWED_COMICS: 'LOAD_MOST_VIEWED_COMICS',
   };
-  const reducer = (state: any, action: any) => {
+  const reducer = (state: stateType, action: actionType): stateType => {
     switch (action.type) {
       case actions.LOAD_COMICS:
         return {
           ...state,
-          comics: action.comics,
+          comics: action.comics || state.comics,
         };
       case actions.LOAD_MOST_VIEWED_COMICS:
         return {
           ...state,
-          mostViewedComic: action.mostViewedComic,
+          mostViewedComics: action.mostViewedComics || state.mostViewedComics,
         };
       default:
         return state;
@@ -35,7 +46,7 @@ const ComicListContext = ({ children }: { children: JSX.Element }) => {
 
   useEffect(() => {
     (async () => {
-      const { data: mostViewedData } = await comicService.getMostViewedComic(40);
+      const { data: mostViewedData } = await comicService.getMostViewedComics(40);
       const { data: abcData } = await comicService.getABCComic(50);
 
       if (!mostViewedData.error)
@@ -46,13 +57,13 @@ const ComicListContext = ({ children }: { children: JSX.Element }) => {
       if (!abcData.error)
         dispatch({
           type: actions.LOAD_MOST_VIEWED_COMICS,
-          mostViewedComic: mostViewedData.data,
+          mostViewedComics: mostViewedData.data,
         });
     })();
   }, []);
   const value = {
     comics: state.comics,
-    mostViewedComic: state.mostViewedComic,
+    mostViewedComics: state.mostViewedComics,
   };
   return <context.Provider value={value}>{children}</context.Provider>;
 };

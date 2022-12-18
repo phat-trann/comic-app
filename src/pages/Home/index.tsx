@@ -4,20 +4,16 @@ import Carousel from '~/elements/AutoCarousel';
 import ComicCover from '~/elements/ComicCover';
 
 function Home() {
-  const { comics, mostViewedComic } = useContext(context);
+  const { comics, mostViewedComics } = useContext(context);
 
   return (
     <div className="w-100">
       <Carousel
         id="most-viewed"
-        dataList={mostViewedComic}
+        dataList={mostViewedComics}
         autoScroll={true}
-        render={([comic, index, elementId, defaultClass]) => (
-          <div
-            key={comic?._id || index}
-            id={elementId}
-            className={defaultClass + 'w-1/2 md:w-1/12'}
-          >
+        render={([comic, index, defaultClass, customKey]) => (
+          <div key={customKey || comic?._id || index} className={defaultClass + 'w-1/2 md:w-1/12'}>
             <ComicCover comicData={comic} />
           </div>
         )}
