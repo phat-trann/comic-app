@@ -7,7 +7,6 @@ import comicService from '~/services/comic.service';
 
 function Home() {
   const { comics, mostViewedComic } = useContext(context);
-  console.log(comics);
 
   return (
     <div className="w-100">

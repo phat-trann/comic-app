@@ -46,8 +46,10 @@ const Carousel = <T,>({
     const firstItemData = firstItem.getBoundingClientRect();
     const itemWidth = firstItemData.width;
     const itemInScreen = Math.floor(windowSize?.width ? windowSize.width / itemWidth : 0);
-    const maxNumber = (currentNumber: number) =>
-      currentNumber <= items.length - 1 ? currentNumber : items.length - 1;
+    const maxNumber = (currentNumber: number) => {
+      if (currentNumber === -1) return items.length - 1;
+      return currentNumber <= items.length - 1 ? currentNumber : items.length - 1;
+    };
 
     return [itemInScreen, maxNumber];
   };
@@ -58,21 +60,27 @@ const Carousel = <T,>({
     if (!items) return;
 
     const [itemInScreen, maxNumber] = dataCarousel();
+
     for (const [index, item] of items.entries()) {
       if (item) {
         const data = item.getBoundingClientRect();
 
-        if (index === 0 && data.x >= 0) {
-          setLeftLink(-1);
+        if (data.x < 0) continue;
+        if (index === 0) {
+          setLeftLink(maxNumber(-1));
           setRightLink(maxNumber(itemInScreen * 2 - 2));
           break;
-        } else if (data.x >= 0) {
-          setLeftLink(index - itemInScreen + 1 > 0 ? index - itemInScreen + 1 : 0);
-          setRightLink(maxNumber(itemInScreen * 2 + index - 3));
-          break;
         }
+        setLeftLink(index - itemInScreen + 1 > 0 ? index - itemInScreen + 1 : 0);
+        setRightLink(maxNumber(itemInScreen * 2 + index - 3));
+        break;
       }
     }
+
+    const lastItemData = items[items.length - 1].getBoundingClientRect();
+
+    if (windowSize?.width && windowSize?.width - lastItemData.x - lastItemData.width > 0)
+      setRightLink(0);
   };
 
   const handleScroll = () => {
@@ -88,6 +96,7 @@ const Carousel = <T,>({
 
   useEffect(() => {
     const [itemInScreen, maxNumber] = dataCarousel();
+    setLeftLink(maxNumber(-1));
     setRightLink(maxNumber(itemInScreen * 2 - 3));
   }, []);
 
