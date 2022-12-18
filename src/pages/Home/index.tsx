@@ -17,8 +17,8 @@ function Home() {
       <Carousel
         dataList={mostViewedComics}
         autoScroll={true}
-        render={([comic, index, defaultClass, customKey]) => (
-          <div key={customKey || comic?._id || index} className={defaultClass + 'w-1/2 md:w-1/12'}>
+        render={([comic, index, defaultClass]) => (
+          <div key={comic?._id || index} className={defaultClass + 'w-1/2 md:w-1/12'}>
             <ComicCover comicData={comic} />
           </div>
         )}

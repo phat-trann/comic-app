@@ -1,22 +1,18 @@
 import React, { useCallback, useContext, useReducer } from 'react';
+import { ACTIONS } from '~/common/constants';
 import { comicDataType } from '~/common/types';
 import comicService from '~/services/comic.service';
 
 interface stateType {
   comics: comicDataType[] | null[];
   mostViewedComics: comicDataType[] | null[];
-  fetchData: () => Promise<void> | void;
+  fetchData: Function;
 }
 
 interface actionType {
   type: string;
   payload?: comicDataType[];
 }
-
-const ACTIONS = {
-  LOAD_COMICS: 'LOAD_COMICS',
-  LOAD_MOST_VIEWED_COMICS: 'LOAD_MOST_VIEWED_COMICS',
-};
 
 const reducer = (state: stateType, action: actionType): stateType => {
   switch (action.type) {
@@ -36,8 +32,8 @@ const reducer = (state: stateType, action: actionType): stateType => {
 };
 
 const initialState: stateType = {
-  comics: [...new Array(50).fill(null)],
-  mostViewedComics: [...new Array(40).fill(null)],
+  comics: [],
+  mostViewedComics: [],
   fetchData: () => {},
 };
 
