@@ -54,7 +54,7 @@ const Carousel = <T,>({
     return [itemInScreen, maxNumber];
   };
 
-  const calculateCarousel = () => {
+  const handleScroll = () => {
     const items = carousel.current?.querySelectorAll('.carousel-item');
 
     if (!items) return;
@@ -81,10 +81,6 @@ const Carousel = <T,>({
 
     if (windowSize?.width && windowSize?.width - lastItemData.x - lastItemData.width > 0)
       setRightLink(0);
-  };
-
-  const handleScroll = () => {
-    calculateCarousel();
   };
 
   const handleGoToSection = (event?: React.MouseEvent<HTMLAnchorElement>, link?: number) => {
