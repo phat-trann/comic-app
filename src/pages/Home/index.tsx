@@ -1,10 +1,16 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { AppContext } from '~/context/AppContext';
 import Carousel from '~/elements/AutoCarousel';
 import ComicCover from '~/elements/ComicCover';
 
 function Home() {
-  const { comics, mostViewedComics } = useContext(AppContext);
+  const { comics, mostViewedComics, fetchData } = useContext(AppContext);
+
+  useEffect(() => {
+    (async () => {
+      await fetchData();
+    })();
+  }, []);
 
   return (
     <div className="w-100">
