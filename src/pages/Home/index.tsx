@@ -13,6 +13,7 @@ function Home() {
       <Carousel
         id="most-viewed"
         dataList={mostViewedComic}
+        autoScroll={true}
         render={([comic, index, elementId, defaultClass]) => (
           <div
             key={comic?._id || index}

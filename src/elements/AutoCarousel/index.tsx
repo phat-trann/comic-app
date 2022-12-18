@@ -26,10 +26,14 @@ const Carousel = <T,>({
   id,
   dataList,
   render,
+  autoScroll = false,
+  autoScrollTime = 2,
 }: {
   id: string;
   dataList: T[];
   render: (arg: [T, number, string, string]) => ReactElement;
+  autoScroll?: boolean;
+  autoScrollTime?: number;
 }) => {
   const [leftLink, setLeftLink] = useState<number>(0);
   const [rightLink, setRightLink] = useState<number>(0);
@@ -37,11 +41,11 @@ const Carousel = <T,>({
   const [windowSize, currentBreakPoint, breakPointConfig] = useWindowSize();
   const isMobile = currentBreakPoint < breakPointConfig['md'];
 
-  const dataCarousel = (): [number, (arg: number) => number] => {
+  const dataCarousel = (): [number, (arg: number) => number, number] => {
     const items = carousel.current?.querySelectorAll('.carousel-item');
     const firstItem = items?.[0];
 
-    if (!firstItem) return [-1, (number: number) => number];
+    if (!firstItem) return [-1, (number: number) => number, 0];
 
     const firstItemData = firstItem.getBoundingClientRect();
     const itemWidth = firstItemData.width;
@@ -51,7 +55,7 @@ const Carousel = <T,>({
       return currentNumber <= items.length - 1 ? currentNumber : items.length - 1;
     };
 
-    return [itemInScreen, maxNumber];
+    return [itemInScreen, maxNumber, itemWidth];
   };
 
   const handleScroll = () => {
@@ -83,6 +87,16 @@ const Carousel = <T,>({
       setRightLink(0);
   };
 
+  const autoScrollFunction = () => {
+    if (carousel.current) {
+      const [_, __, itemWidth] = dataCarousel();
+      const currentScrollLeft = carousel.current.scrollLeft;
+      const currentScrollTop = carousel.current.scrollTop;
+
+      carousel.current.scroll(currentScrollLeft + itemWidth, currentScrollTop);
+    }
+  };
+
   const handleGoToSection = (event?: React.MouseEvent<HTMLAnchorElement>, link?: number) => {
     event && event.preventDefault();
 
@@ -94,6 +108,12 @@ const Carousel = <T,>({
     const [itemInScreen, maxNumber] = dataCarousel();
     setLeftLink(maxNumber(-1));
     setRightLink(maxNumber(itemInScreen * 2 - 3));
+
+    if (autoScroll) {
+      const autoScrollInterval = setInterval(autoScrollFunction, autoScrollTime * 1000);
+
+      return () => clearInterval(autoScrollInterval);
+    }
   }, []);
 
   return (
