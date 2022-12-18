@@ -83,7 +83,7 @@ const Carousel = <T,>({
   return (
     <div className="relative flex w-full flex-wrap">
       <div
-        className="carousel-center carousel w-screen"
+        className="carousel w-screen"
         ref={carousel}
         onWheel={disableAuto}
         onTouchMove={disableAuto}
