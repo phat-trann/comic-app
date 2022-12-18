@@ -5,18 +5,18 @@ import ChevronRight from '~/icons/ChevronRight';
 
 const ArrowLink = ({
   onClick,
-  link,
+  isForward = false,
   isMobile,
   children,
 }: {
-  onClick: (event: React.MouseEvent<HTMLAnchorElement>, link?: number) => void;
-  link?: number;
+  onClick: (event: React.MouseEvent<HTMLAnchorElement>, isForward?: boolean) => void;
+  isForward?: boolean;
   isMobile: boolean;
   children: JSX.Element;
 }) => (
   <a
     className={`btn-circle btn pointer-events-auto h-8 min-h-0 w-8${isMobile ? ' invisible' : ''}`}
-    onClick={(event) => onClick(event, link)}
+    onClick={(event) => onClick(event, isForward)}
   >
     {children}
   </a>
@@ -35,82 +35,45 @@ const Carousel = <T,>({
   autoScroll?: boolean;
   autoScrollTime?: number;
 }) => {
-  const [leftLink, setLeftLink] = useState<number>(0);
-  const [rightLink, setRightLink] = useState<number>(0);
   const carousel = useRef<HTMLDivElement | null>(null);
+  const isTrigger = useRef<boolean>(false);
   const [windowSize, currentBreakPoint, breakPointConfig] = useWindowSize();
   const isMobile = currentBreakPoint < breakPointConfig['md'];
 
-  const dataCarousel = (): [number, (arg: number) => number, number] => {
-    const items = carousel.current?.querySelectorAll('.carousel-item');
-    const firstItem = items?.[0];
-
-    if (!firstItem) return [-1, (number: number) => number, 0];
-
-    const firstItemData = firstItem.getBoundingClientRect();
-    const itemWidth = firstItemData.width;
-    const itemInScreen = Math.floor(windowSize?.width ? windowSize.width / itemWidth : 0);
-    const maxNumber = (currentNumber: number) => {
-      if (currentNumber === -1) return items.length - 1;
-      return currentNumber <= items.length - 1 ? currentNumber : items.length - 1;
-    };
-
-    return [itemInScreen, maxNumber, itemWidth];
-  };
-
-  const handleScroll = () => {
-    const items = carousel.current?.querySelectorAll('.carousel-item');
-
-    if (!items) return;
-
-    const [itemInScreen, maxNumber] = dataCarousel();
-
-    for (const [index, item] of items.entries()) {
-      if (item) {
-        const data = item.getBoundingClientRect();
-
-        if (data.x < 0) continue;
-        if (index === 0) {
-          setLeftLink(maxNumber(-1));
-          setRightLink(maxNumber(itemInScreen * 2 - 2));
-          break;
-        }
-        setLeftLink(index - itemInScreen + 1 > 0 ? index - itemInScreen + 1 : 0);
-        setRightLink(maxNumber(itemInScreen * 2 + index - 3));
-        break;
-      }
-    }
-
-    const lastItemData = items[items.length - 1].getBoundingClientRect();
-
-    if (windowSize?.width && windowSize?.width - lastItemData.x - lastItemData.width > 0)
-      setRightLink(0);
-  };
-
-  const autoScrollFunction = () => {
+  const scrollCarousel = (width: number) => {
     if (carousel.current) {
-      const [_, __, itemWidth] = dataCarousel();
       const currentScrollLeft = carousel.current.scrollLeft;
       const currentScrollTop = carousel.current.scrollTop;
 
-      carousel.current.scroll(currentScrollLeft + itemWidth, currentScrollTop);
+      carousel.current.scroll(currentScrollLeft + width, currentScrollTop);
     }
   };
 
-  const handleGoToSection = (event?: React.MouseEvent<HTMLAnchorElement>, link?: number) => {
+  const triggerScroll = (event?: React.MouseEvent<HTMLAnchorElement>, isForward?: boolean) => {
     event && event.preventDefault();
 
-    const currentItem = document.querySelector(`#${[id, link].join('-')}`);
-    currentItem && currentItem.scrollIntoView();
+    scrollCarousel(isForward ? -windowSize.width : windowSize?.width);
+    isTrigger.current = true;
   };
 
   useEffect(() => {
-    const [itemInScreen, maxNumber] = dataCarousel();
-    setLeftLink(maxNumber(-1));
-    setRightLink(maxNumber(itemInScreen * 2 - 3));
+    const items = carousel.current?.querySelectorAll('.carousel-item');
+    const firstItem = items?.[0];
+    let itemWidth = 0;
+
+    if (firstItem) {
+      const firstItemData = firstItem.getBoundingClientRect();
+      itemWidth = firstItemData.width;
+    }
 
     if (autoScroll) {
-      const autoScrollInterval = setInterval(autoScrollFunction, autoScrollTime * 1000);
+      const autoScrollInterval = setInterval(() => {
+        if (isTrigger.current === true) {
+          isTrigger.current = false;
+          return;
+        }
+        scrollCarousel(itemWidth);
+      }, autoScrollTime * 1000);
 
       return () => clearInterval(autoScrollInterval);
     }
@@ -118,16 +81,16 @@ const Carousel = <T,>({
 
   return (
     <div className="relative flex w-full flex-wrap">
-      <div className="carousel-center carousel w-screen" ref={carousel} onScroll={handleScroll}>
+      <div className="carousel-center carousel w-screen" ref={carousel}>
         {dataList.map((comic: T, index: number) =>
           render([comic, index, [id, index].join('-'), 'carousel-item ']),
         )}
       </div>
       <div className="pointer-events-none absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
-        <ArrowLink isMobile={isMobile} link={leftLink} onClick={handleGoToSection}>
+        <ArrowLink isMobile={isMobile} isForward={true} onClick={triggerScroll}>
           <ChevronLeft />
         </ArrowLink>
-        <ArrowLink isMobile={isMobile} link={rightLink} onClick={handleGoToSection}>
+        <ArrowLink isMobile={isMobile} onClick={triggerScroll}>
           <ChevronRight />
         </ArrowLink>
       </div>

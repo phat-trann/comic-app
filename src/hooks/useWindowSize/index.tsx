@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 
 interface windowSizeType {
-  width: number | undefined;
-  height: number | undefined;
+  width: number;
+  height: number;
 }
 
-const breakPointConfig = {
+const config = {
   xs: 0,
   sm: 1,
   md: 2,
@@ -15,12 +15,12 @@ const breakPointConfig = {
 };
 
 const getBreakPoint = (width: number) => {
-  if (width >= 1536) return 5;
-  if (width >= 1280) return 4;
-  if (width >= 1024) return 3;
-  if (width >= 768) return 2;
-  if (width >= 640) return 1;
-  return 0;
+  if (width >= 1536) return config['2xl'];
+  if (width >= 1280) return config['xl'];
+  if (width >= 1024) return config['lg'];
+  if (width >= 768) return config['md'];
+  if (width >= 640) return config['sm'];
+  return config['xs'];
 };
 
 const useWindowSize = (): [windowSizeType, number, { [type: string]: number }] => {
@@ -46,7 +46,7 @@ const useWindowSize = (): [windowSizeType, number, { [type: string]: number }] =
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  return [windowSize, breakPoint, breakPointConfig];
+  return [windowSize, breakPoint, config];
 };
 
 export default useWindowSize;

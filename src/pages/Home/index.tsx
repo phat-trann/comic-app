@@ -1,9 +1,7 @@
-import { useContext, useEffect, useState } from 'react';
-import { comicDataType } from '~/common/types';
+import { useContext } from 'react';
 import { context } from '~/context/ComicList';
 import Carousel from '~/elements/AutoCarousel';
 import ComicCover from '~/elements/ComicCover';
-import comicService from '~/services/comic.service';
 
 function Home() {
   const { comics, mostViewedComic } = useContext(context);
