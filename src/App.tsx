@@ -1,16 +1,16 @@
 import { BrowserRouter } from 'react-router-dom';
 import Routes from '~/routers';
-import ComicListContext from './context/ComicList';
+import AppContextProvider from './context/AppContext';
 
 function App() {
   return (
-    <ComicListContext>
+    <AppContextProvider>
       <div className="App">
         <BrowserRouter>
           <Routes />
         </BrowserRouter>
       </div>
-    </ComicListContext>
+    </AppContextProvider>
   );
 }
 

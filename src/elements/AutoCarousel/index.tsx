@@ -23,13 +23,11 @@ const ArrowLink = ({
 );
 
 const Carousel = <T,>({
-  id,
   dataList,
   render,
   autoScroll = false,
   autoScrollTime = 2,
 }: {
-  id: string;
   dataList: T[];
   render: (arg: [T, number, string, string | undefined]) => ReactElement;
   autoScroll?: boolean;

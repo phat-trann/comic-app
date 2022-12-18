@@ -18,9 +18,9 @@ const initialState: stateType = {
   mostViewedComics: [...new Array(40).fill(null)],
 };
 
-export const context = React.createContext(initialState);
+export const AppContext = React.createContext(initialState);
 
-const ComicListContext = ({ children }: { children: JSX.Element }) => {
+const AppContextProvider = ({ children }: { children: JSX.Element }) => {
   const actions = {
     LOAD_COMICS: 'LOAD_COMICS',
     LOAD_MOST_VIEWED_COMICS: 'LOAD_MOST_VIEWED_COMICS',
@@ -65,7 +65,7 @@ const ComicListContext = ({ children }: { children: JSX.Element }) => {
     comics: state.comics,
     mostViewedComics: state.mostViewedComics,
   };
-  return <context.Provider value={value}>{children}</context.Provider>;
+  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
 
-export default ComicListContext;
+export default AppContextProvider;

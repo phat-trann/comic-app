@@ -1,15 +1,14 @@
 import { useContext } from 'react';
-import { context } from '~/context/ComicList';
+import { AppContext } from '~/context/AppContext';
 import Carousel from '~/elements/AutoCarousel';
 import ComicCover from '~/elements/ComicCover';
 
 function Home() {
-  const { comics, mostViewedComics } = useContext(context);
+  const { comics, mostViewedComics } = useContext(AppContext);
 
   return (
     <div className="w-100">
       <Carousel
-        id="most-viewed"
         dataList={mostViewedComics}
         autoScroll={true}
         render={([comic, index, defaultClass, customKey]) => (
