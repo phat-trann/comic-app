@@ -33,7 +33,6 @@ const useCallApiOnce = <T,>(
         }
       } catch (error: any) {
         setError({ error: true, message: error?.message || ERROR_TEXT });
-        console.log(error);
       }
     })();
 
@@ -41,8 +40,6 @@ const useCallApiOnce = <T,>(
       isMounted.current = true;
     };
   }, []);
-
-  console.log({ data, loading, error });
 
   return { data, loading, error };
 };

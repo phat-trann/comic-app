@@ -14,8 +14,6 @@ function ComicDetail() {
 
   if (error?.error || data?.error) return <div>{error?.message || ERROR_TEXT}</div>;
 
-  console.log(loading || !currentComic);
-
   return (
     <div className="">
       <div className="">
