@@ -1,5 +1,5 @@
 import { URLs } from '~/common/constants';
-import { comicDataType } from '~/common/types';
+import { chapterDetailType, comicDataType } from '~/common/types';
 import api from './api';
 
 const searchComic = async (paramSearch: {
@@ -21,8 +21,24 @@ const getABCComic = (limit: number) => {
 const getMostViewedComics = (limit: number) => {
   return searchComic({ limit, sort: 'views', sortType: 'desc' });
 };
+const getComicDetail = async (id: string): Promise<{ data: comicDataType; error: boolean }> => {
+  const res = await api.get(`/comic/${id}`);
+
+  return res.data;
+};
+
+const getChapterDetail = async (
+  id: string,
+  chap: string,
+): Promise<{ data: chapterDetailType; error: boolean }> => {
+  const res = await api.get(`/comic/${id}/${chap}`);
+
+  return res.data;
+};
 
 export default {
   getABCComic,
   getMostViewedComics,
+  getComicDetail,
+  getChapterDetail,
 };

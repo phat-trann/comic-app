@@ -5,6 +5,11 @@ export interface chapterType {
   hashName: string;
 }
 
+export interface chapterDetailType extends chapterType {
+  _id: number,
+  images: Array<string>
+}
+
 export interface comicDataType {
   _id: number;
   hashName: string;

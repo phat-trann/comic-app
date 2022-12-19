@@ -1,35 +1,20 @@
-import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { ERROR_TEXT } from '~/common/constants';
 import { diffDate, formatView } from '~/common/helpers/formatData';
+import { useCallApiOnce } from '~/hooks';
+import comicService from '~/services/comic.service';
 
-function Home() {
+function ComicDetail() {
   const { id } = useParams();
-  const [loading, setLoading] = useState(true);
-  const [currentComic, setCurrentComic] = useState<any>();
-  const [error, setError] = useState('');
+  const { data, loading, error } = useCallApiOnce(
+    async () => await comicService.getComicDetail(id || ''),
+  );
+  const currentComic = useMemo(() => data?.data, [data?.data]);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const results: { error: boolean; data: any } = await axios.get(
-          `${import.meta.env.VITE_HOST}/comic/${id}`
-        );
+  if (error?.error || data?.error) return <div>{error?.message || ERROR_TEXT}</div>;
 
-        if (!results?.error && !results?.data?.error) {
-          setCurrentComic(results.data);
-        } else {
-          setError(results.error || results.data.error);
-        }
-        setLoading(false);
-      } catch (error: any) {
-        setLoading(false);
-        setError(error.message);
-      }
-    })();
-  }, [id]);
-
-  if (error) return <div>{error}</div>;
+  console.log(loading || !currentComic);
 
   return (
     <div className="">
@@ -41,24 +26,19 @@ function Home() {
             <div>
               <img src={currentComic.avatar} className="" />
               <p className="">Name: {currentComic.name}</p>
-              <p className="">
-                Another name: {currentComic.anotherName.join(', ')}
-              </p>
+              <p className="">Another name: {currentComic.anotherName.join(', ')}</p>
               <p className="">Artists: {currentComic.artists.join(', ')}</p>
               <p className="">Authors: {currentComic.authors.join(', ')}</p>
               <p className="">Description: {currentComic.description}</p>
               <p className="">Category: {currentComic.category.join(', ')}</p>
-              <p className="">
-                Status: {currentComic.isDone ? 'Done' : 'In Progress'}
-              </p>
+              <p className="">Status: {currentComic.isDone ? 'Done' : 'In Progress'}</p>
               <p className="">Views: {formatView(currentComic.views)}</p>
               <p className="">Followers: {currentComic.followers}</p>
               <p className="">Chapters: {currentComic.chapters.length}</p>
               {currentComic.chapters.map((ell: any) => (
                 <div key={ell._id}>
                   <Link to={`/${ell.hashName}`} className="">
-                    {ell.name} - {formatView(ell.views)} -{' '}
-                    {diffDate(ell.updateDate, Date.now())}
+                    {ell.name} - {formatView(ell.views)} - {diffDate(ell.updateDate, Date.now())}
                   </Link>
                 </div>
               ))}
@@ -70,4 +50,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default ComicDetail;

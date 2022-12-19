@@ -1,51 +1,31 @@
-import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
+import { ERROR_TEXT } from '~/common/constants';
 import { diffDate, formatView } from '~/common/helpers/formatData';
+import { useCallApiOnce } from '~/hooks';
+import comicService from '~/services/comic.service';
 
 const Chapters = () => {
   const { id, chap } = useParams();
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<any>();
-  const [images, setImages] = useState<Array<undefined | string>>([]);
-  const [error, setError] = useState('');
+  const { data, loading, error } = useCallApiOnce(
+    async () => await comicService.getChapterDetail(id || '', chap || ''),
+  );
+  const images = useMemo(() => data?.data?.images, [data]);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const results: { error: boolean; data: any } = await axios.get(
-          `${import.meta.env.VITE_HOST}/comic/${id}/${chap}`
-        );
-
-        if (!results?.error && !results?.data?.error) {
-          const { images, ...data } = results.data;
-          setImages(images);
-          setData(data);
-        } else {
-          setError(results.error || results.data.error);
-        }
-        setLoading(false);
-      } catch (error: any) {
-        setLoading(false);
-        setError(error.message);
-      }
-    })();
-  }, [id, chap]);
-
-  if (error) return <p>{error}</p>;
+  if (error?.error || data?.error) return <p>{error?.message || ERROR_TEXT}</p>;
 
   return (
     <div>
-      {loading ? (
+      {loading || !data || !images?.length ? (
         <p>Loading</p>
       ) : (
         <>
           <div>
-            {data.name} - {formatView(data.views)} -{' '}
-            {diffDate(data.updateDate, Date.now())}
+            {data.data.name} - {formatView(data.data.views)} -{' '}
+            {diffDate(data.data.updateDate, Date.now())}
           </div>
           <div>
-            {images.map((el, index) => (
+            {images.map((el: any, index: any) => (
               <img src={el} key={index} />
             ))}
           </div>

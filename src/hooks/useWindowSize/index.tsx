@@ -28,7 +28,7 @@ const useWindowSize = (): [windowSizeType, number, { [type: string]: number }] =
     width: window.innerWidth,
     height: window.innerHeight,
   });
-  const [breakPoint, setBreakPoint] = useState(0);
+  const [breakPoint, setBreakPoint] = useState(getBreakPoint(window.innerWidth));
 
   useEffect(() => {
     const handleResize = () => {

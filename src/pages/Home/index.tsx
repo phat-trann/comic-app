@@ -1,16 +1,13 @@
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import { AppContext } from '~/context/AppContext';
 import Carousel from '~/elements/AutoCarousel';
 import ComicCover from '~/elements/ComicCover';
+import { useCallApiOnce } from '~/hooks';
 
 function Home() {
   const { comics, mostViewedComics, fetchData } = useContext(AppContext);
 
-  useEffect(() => {
-    (async () => {
-      await fetchData();
-    })();
-  }, []);
+  useCallApiOnce(async () => await fetchData(), [comics, mostViewedComics]);
 
   return (
     <div className="w-100">

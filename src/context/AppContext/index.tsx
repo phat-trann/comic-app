@@ -1,11 +1,11 @@
-import React, { useCallback, useContext, useReducer } from 'react';
+import React, { useCallback, useReducer } from 'react';
 import { ACTIONS } from '~/common/constants';
 import { comicDataType } from '~/common/types';
 import comicService from '~/services/comic.service';
 
 interface stateType {
-  comics: comicDataType[] | null[];
-  mostViewedComics: comicDataType[] | null[];
+  comics: comicDataType[];
+  mostViewedComics: comicDataType[];
   fetchData: Function;
 }
 
@@ -43,10 +43,10 @@ const AppContextProvider = ({ children }: { children: JSX.Element }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const fetchData = useCallback(async () => {
-    const { error, data } = await comicService.getABCComic(50);
-    const { error: mostViewedError, data: mostViewedData } = await comicService.getMostViewedComics(
-      40,
-    );
+    const [{ error, data }, { error: mostViewedError, data: mostViewedData }] = await Promise.all([
+      comicService.getABCComic(40),
+      comicService.getMostViewedComics(30),
+    ]);
 
     if (!error)
       dispatch({
