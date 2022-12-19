@@ -43,18 +43,20 @@ const AppContextProvider = ({ children }: { children: JSX.Element }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const fetchData = useCallback(async () => {
-    const { data: abcData } = await comicService.getABCComic(50);
-    const { data: mostViewedData } = await comicService.getMostViewedComics(40);
+    const { error, data } = await comicService.getABCComic(50);
+    const { error: mostViewedError, data: mostViewedData } = await comicService.getMostViewedComics(
+      40,
+    );
 
-    if (!mostViewedData.error)
+    if (!error)
       dispatch({
         type: ACTIONS.LOAD_COMICS,
-        payload: abcData.data,
+        payload: data,
       });
-    if (!abcData.error)
+    if (!mostViewedError)
       dispatch({
         type: ACTIONS.LOAD_MOST_VIEWED_COMICS,
-        payload: mostViewedData.data,
+        payload: mostViewedData,
       });
   }, []);
 

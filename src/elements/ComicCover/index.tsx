@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { LOADING_TEXT } from '~/common/constants';
 import { changeWidthImageUrl, diffDate, formatView } from '~/common/helpers/formatData';
@@ -41,11 +41,10 @@ const ComicCover: React.FC<{
   comicData: comicDataType | null;
   showNewest?: boolean;
 }> = ({ comicData, showNewest = false }) => {
-  const [lastChapter, setLastChapter] = useState<chapterType>();
-
-  useEffect(() => {
-    setLastChapter(comicData?.chapters[comicData.chapters.length - 1]);
-  }, [comicData?.chapters]);
+  const lastChapter = useMemo(
+    () => comicData?.chapters[comicData.chapters.length - 1],
+    [comicData?.chapters],
+  );
 
   return (
     <div className="w-full p-4">

@@ -1,27 +1,25 @@
-import { AxiosResponse } from 'axios';
+import { URLs } from '~/common/constants';
 import { comicDataType } from '~/common/types';
 import api from './api';
 
-const getABCComic = async (
-  limit: number,
-): Promise<AxiosResponse<{ error: boolean; data: comicDataType[] }, null>> => {
-  return await api.get(`/comic/search`, {
+const searchComic = async (paramSearch: {
+  [key: string]: string | number;
+}): Promise<{ data: comicDataType[]; error: boolean }> => {
+  const res = await api.get(URLs.SEARCH, {
     params: {
-      limit,
+      ...paramSearch,
     },
   });
+
+  return res.data;
 };
 
-const getMostViewedComics = async (
-  limit: number,
-): Promise<AxiosResponse<{ error: boolean; data: comicDataType[] }, null>> => {
-  return await api.get(`/comic/search`, {
-    params: {
-      limit,
-      sort: 'views',
-      sortType: 'desc',
-    },
-  });
+const getABCComic = (limit: number) => {
+  return searchComic({ limit });
+};
+
+const getMostViewedComics = (limit: number) => {
+  return searchComic({ limit, sort: 'views', sortType: 'desc' });
 };
 
 export default {
