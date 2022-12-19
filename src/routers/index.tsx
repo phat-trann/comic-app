@@ -1,23 +1,27 @@
 import { useRoutes } from 'react-router-dom';
-import Layout from '~/layouts';
+import MainLayout from '~/layouts/Main';
 import { Chapters, ComicDetail, Home } from '~/pages';
+import SingleComicLayout from '~/layouts/SingleComic';
 
 const Routes = () => {
   return useRoutes([
     {
-      element: <Layout />,
+      element: <MainLayout />,
       children: [
         {
           path: '/',
           element: <Home />,
         },
         {
-          path: '/:id',
-          element: <ComicDetail />
-        },
-        {
-          path: '/:id/:chap',
-          element: <Chapters />,
+          path: ':id',
+          element: <SingleComicLayout />,
+          children: [
+            { path: '', element: <ComicDetail /> },
+            {
+              path: ':chap',
+              element: <Chapters />,
+            },
+          ],
         },
       ],
     },
