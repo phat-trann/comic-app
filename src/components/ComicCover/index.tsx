@@ -5,6 +5,7 @@ import { changeWidthImageUrl, diffDate, formatView } from '~/common/helpers/form
 import { comicDataType, chapterType } from '~/common/types';
 import Views from '~/icons/Views';
 import ImageSkeleton from '../ImageSkeleton';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 const TitleInside: React.FC<{ name?: string }> = ({ name }) => (
   <div className="absolute bottom-0 h-7 w-full bg-gradient-to-b from-transparent to-gray-900 text-white">
@@ -50,8 +51,10 @@ const ComicCover: React.FC<{
           <div>
             <div className="relative flex h-60 items-center justify-center overflow-hidden md:h-48">
               {comicData ? (
-                <img
-                  src={changeWidthImageUrl(comicData.avatar, 150)}
+                <LazyLoadImage
+                  alt={comicData?.name}
+                  src={changeWidthImageUrl(comicData.avatar, 500)}
+                  placeholderSrc={changeWidthImageUrl(comicData.avatar, 30)}
                   className="h-full w-full object-cover"
                 />
               ) : (

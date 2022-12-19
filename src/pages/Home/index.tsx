@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { AppContext } from '~/context/AppContext';
-import Carousel from '~/elements/AutoCarousel';
-import ComicCover from '~/elements/ComicCover';
+import Carousel from '~/components/AutoCarousel';
+import ComicCover from '~/components/ComicCover';
 import { useCallApiOnce } from '~/hooks';
 
 function Home() {
