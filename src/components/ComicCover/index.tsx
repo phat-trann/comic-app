@@ -48,20 +48,24 @@ const ComicCover: React.FC<{
     <div className="w-full p-4">
       <div className="overflow-hidden rounded-lg">
         <Link to={`/${comicData?.hashName || ''}`}>
-          <div>
-            <div className="relative flex h-60 items-center justify-center overflow-hidden md:h-48">
-              {comicData ? (
-                <LazyLoadImage
-                  alt={comicData?.name}
-                  src={changeWidthImageUrl(comicData.avatar, 500)}
-                  placeholderSrc={changeWidthImageUrl(comicData.avatar, 30)}
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <ImageSkeleton className="h-full w-full" />
-              )}
-              {!showNewest && <TitleInside name={comicData?.name} />}
-            </div>
+          <div className="relative flex h-60 items-center justify-center overflow-hidden md:h-48">
+            {comicData ? (
+              <LazyLoadImage
+                alt={comicData?.name}
+                src={changeWidthImageUrl(comicData.avatar, 200)}
+                placeholder={
+                  <img
+                    src={changeWidthImageUrl(comicData.avatar, 10)}
+                    className="h-full w-full object-cover"
+                  />
+                }
+                height={245}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <ImageSkeleton className="h-full w-full" />
+            )}
+            {!showNewest && <TitleInside name={comicData?.name} />}
           </div>
         </Link>
         {showNewest && (
