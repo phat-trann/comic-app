@@ -3,7 +3,7 @@ import Routes from '~/routers';
 
 function App() {
   return (
-    <div className="App">
+    <div className="App bg-stone-50">
       <BrowserRouter>
         <Routes />
       </BrowserRouter>

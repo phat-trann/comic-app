@@ -40,7 +40,7 @@ const TitleOutside: React.FC<{ className: string; lastChapter?: chapterType; nam
         </div>
         <div className="w-full">{diffDate(lastChapter?.updateDate || Date.now(), Date.now())}</div>
       </div>
-      <div className="pt-2 text-xs font-bold">
+      <div className="pt-2 text-sm font-bold">
         <div className="line-clamp-3">{name || t('common.loading')}</div>
       </div>
     </div>

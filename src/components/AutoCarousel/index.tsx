@@ -78,7 +78,7 @@ const Carousel = <T,>({
 
       return () => clearInterval(autoScrollInterval);
     }
-  }, [dataList]);
+  }, [dataList, windowSize.width]);
 
   return (
     <div className="relative flex w-full flex-wrap">

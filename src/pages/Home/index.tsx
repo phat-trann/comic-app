@@ -4,6 +4,8 @@ import Carousel from '~/components/AutoCarousel';
 import ComicCover from '~/components/ComicCover';
 import { useCallApiOnce } from '~/hooks';
 import { useTranslation } from 'react-i18next';
+import Star from '~/icons/Star';
+import Fire from '~/icons/Fire';
 
 function Home() {
   const { comics, mostViewedComics, fetchData } = useContext(AppContext);
@@ -12,10 +14,15 @@ function Home() {
   useCallApiOnce(async () => await fetchData(), [comics, mostViewedComics]);
 
   return (
-    <div className="w-100 pt-20">
+    <div className="w-100 pt-2">
       <div>
         <div className="px-2 font-bold">
-          <h3>{t('title.most_viewed')}</h3>
+          <h1 className="flex items-center text-amber-500">
+            <span className="mr-1">
+              <Star />
+            </span>
+            <span>{t('title.most_viewed')}</span>
+          </h1>
         </div>
         <div className="p-1">
           <Carousel
@@ -33,7 +40,12 @@ function Home() {
       </div>
       <div className="pt-4">
         <div className="px-2 font-bold">
-          <h3>{t('title.recently')}</h3>
+          <h1 className="flex items-center text-red-500">
+            <span className="mr-1">
+              <Fire />
+            </span>
+            <span>{t('title.recently')}</span>
+          </h1>
         </div>
         <div className="flex w-full flex-wrap">
           {comics.map((comic, index) => (
@@ -43,7 +55,7 @@ function Home() {
                   comicData={comic}
                   showNewest={true}
                   imageClass="h-60"
-                  titleClass="h-20"
+                  titleClass="h-28"
                 />
               </div>
             </div>
