@@ -4,11 +4,9 @@ const ImageSkeleton: React.FC<{ className: string }> = ({ className }) => {
   return (
     <div
       role="status"
-      className={`animate-pulse space-y-8 md:flex md:items-center md:space-y-0 md:space-x-8 ${className}`}
+      className={`flex animate-pulse items-center space-y-0 space-x-8 ${className}`}
     >
-      <div
-        className={`flex items-center justify-center bg-gray-300 dark:bg-gray-700 ${className}`}
-      >
+      <div className={`flex items-center justify-center bg-gray-300 dark:bg-gray-700 ${className}`}>
         <svg
           className="h-9 w-9 text-gray-200"
           xmlns="http://www.w3.org/2000/svg"

@@ -7,17 +7,20 @@ import Views from '~/icons/Views';
 import ImageSkeleton from '../ImageSkeleton';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 
-const TitleInside: React.FC<{ name?: string }> = ({ name }) => (
-  <div className="absolute bottom-0 h-7 w-full bg-gradient-to-b from-transparent to-gray-900 text-white">
+const TitleInside: React.FC<{ className: string; name?: string }> = ({ className, name }) => (
+  <div
+    className={`absolute bottom-0 h-7 w-full bg-gradient-to-b from-transparent to-gray-900 text-white ${className}`}
+  >
     <p className="w-full px-1 text-center line-clamp-1">{name || LOADING_TEXT}</p>
   </div>
 );
 
-const TitleOutside: React.FC<{ lastChapter?: chapterType; name?: string }> = ({
+const TitleOutside: React.FC<{ className: string; lastChapter?: chapterType; name?: string }> = ({
+  className,
   lastChapter,
   name,
 }) => (
-  <div className="h-20">
+  <div className={className}>
     <div className="pt-1 text-xs font-bold">
       <div className="flex">
         <div className="w-5/12">{lastChapter?.name || LOADING_TEXT}</div>
@@ -39,41 +42,41 @@ const TitleOutside: React.FC<{ lastChapter?: chapterType; name?: string }> = ({
 );
 
 const ComicCover: React.FC<{
+  imageClass: string;
+  titleClass: string;
   comicData: comicDataType | null;
   showNewest?: boolean;
-}> = ({ comicData, showNewest = false }) => {
+}> = ({ imageClass, titleClass, comicData, showNewest = false }) => {
   const lastChapter = comicData?.chapters[comicData.chapters.length - 1];
 
   return (
-    <div className="w-full p-4">
-      <div className="overflow-hidden rounded-lg">
-        <Link to={`/${comicData?.hashName || ''}`}>
-          <div className="relative flex h-60 items-center justify-center overflow-hidden md:h-48">
-            {comicData ? (
-              <LazyLoadImage
-                alt={comicData?.name}
-                src={changeWidthImageUrl(comicData.avatar, 200)}
-                placeholder={
-                  <img
-                    src={changeWidthImageUrl(comicData.avatar, 10)}
-                    className="h-full w-full object-cover"
-                  />
-                }
-                threshold={240}
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <ImageSkeleton className="h-full w-full" />
-            )}
-            {!showNewest && <TitleInside name={comicData?.name} />}
-          </div>
+    <div className="overflow-hidden rounded-lg">
+      <Link to={`/${comicData?.hashName || ''}`}>
+        <div className={`relative flex items-center justify-center overflow-hidden ${imageClass}`}>
+          {comicData ? (
+            <LazyLoadImage
+              alt={comicData?.name}
+              src={changeWidthImageUrl(comicData.avatar, 200)}
+              placeholder={
+                <img
+                  src={changeWidthImageUrl(comicData.avatar, 10)}
+                  className="h-full w-full object-cover"
+                />
+              }
+              threshold={240}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <ImageSkeleton className="h-full w-full" />
+          )}
+          {!showNewest && <TitleInside name={comicData?.name} className={titleClass} />}
+        </div>
+      </Link>
+      {showNewest && (
+        <Link to={`/${lastChapter?.hashName || ''}`}>
+          <TitleOutside lastChapter={lastChapter} name={comicData?.name} className={titleClass} />
         </Link>
-        {showNewest && (
-          <Link to={`/${lastChapter?.hashName || ''}`}>
-            <TitleOutside lastChapter={lastChapter} name={comicData?.name} />
-          </Link>
-        )}
-      </div>
+      )}
     </div>
   );
 };
