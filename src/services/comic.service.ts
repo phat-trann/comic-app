@@ -14,8 +14,8 @@ const searchComic = async (paramSearch: {
   return res.data;
 };
 
-const getABCComic = (limit: number) => {
-  return searchComic({ limit });
+const getNewUploadComic = (limit: number) => {
+  return searchComic({ limit, sort: 'lastUpload', sortType: 'desc' });
 };
 
 const getMostViewedComics = (limit: number) => {
@@ -37,7 +37,7 @@ const getChapterDetail = async (
 };
 
 export default {
-  getABCComic,
+  getNewUploadComic,
   getMostViewedComics,
   getComicDetail,
   getChapterDetail,

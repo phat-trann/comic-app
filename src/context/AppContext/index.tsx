@@ -42,23 +42,34 @@ export const AppContext = React.createContext(initialState);
 const AppContextProvider = ({ children }: { children: JSX.Element }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const fetchData = useCallback(async () => {
-    const [{ error, data }, { error: mostViewedError, data: mostViewedData }] = await Promise.all([
-      comicService.getABCComic(40),
-      comicService.getMostViewedComics(30),
-    ]);
+  const fetchData = useCallback(
+    async ({
+      mostViewedCount,
+      newUploadCount,
+    }: {
+      mostViewedCount?: number;
+      newUploadCount?: number;
+    }) => {
+      const [{ error, data }, { error: mostViewedError, data: mostViewedData }] = await Promise.all(
+        [
+          comicService.getNewUploadComic(newUploadCount || 40),
+          comicService.getMostViewedComics(mostViewedCount || 30),
+        ],
+      );
 
-    if (!error)
-      dispatch({
-        type: ACTIONS.LOAD_COMICS,
-        payload: data,
-      });
-    if (!mostViewedError)
-      dispatch({
-        type: ACTIONS.LOAD_MOST_VIEWED_COMICS,
-        payload: mostViewedData,
-      });
-  }, []);
+      if (!error)
+        dispatch({
+          type: ACTIONS.LOAD_COMICS,
+          payload: data,
+        });
+      if (!mostViewedError)
+        dispatch({
+          type: ACTIONS.LOAD_MOST_VIEWED_COMICS,
+          payload: mostViewedData,
+        });
+    },
+    [],
+  );
 
   const value = {
     comics: state.comics,

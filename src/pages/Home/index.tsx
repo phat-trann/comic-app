@@ -14,7 +14,7 @@ function Home() {
   useCallApiOnce(async () => await fetchData(), [comics, mostViewedComics]);
 
   return (
-    <div className="w-100 pt-2">
+    <div className="w-100 pt-4 pb-10">
       <div>
         <div className="px-2 font-bold">
           <h1 className="flex items-center text-amber-500">
