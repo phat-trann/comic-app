@@ -1,16 +1,17 @@
 import { useContext, useMemo, useState } from 'react';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { useParams } from 'react-router-dom';
-import { ERROR_TEXT } from '~/common/constants';
-import { changeWidthImageUrl, diffDate, formatView } from '~/common/helpers/formatData';
+import { changeWidthImageUrl } from '~/common/helpers/formatData';
 import ImageSkeleton from '~/components/ImageSkeleton';
 import { ComicContext } from '~/context/ComicContext';
 import { useCallApiOnce, useWindowSize } from '~/hooks';
+import { useTranslation } from 'react-i18next';
 
 const Chapters = () => {
   let { id, chap } = useParams();
   if (!id) id = '';
   if (!chap) chap = '';
+  const { t } = useTranslation();
   const [{ height }] = useWindowSize();
   const [showFirstLoading, setShowFirstLoading] = useState(true);
   const { chapters, getChapter } = useContext(ComicContext);
@@ -21,7 +22,7 @@ const Chapters = () => {
   const currentChapter = useMemo(() => chapters[chap as string], [chapters[chap]]);
   const images = useMemo(() => currentChapter?.images, [currentChapter]);
 
-  if (error?.error || data?.error) return <p>{error?.message || ERROR_TEXT}</p>;
+  if (error?.error || data?.error) return <p>{error?.message || t('common.error')}</p>;
 
   return (
     <>

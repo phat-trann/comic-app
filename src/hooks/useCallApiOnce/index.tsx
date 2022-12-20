@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { ERROR_TEXT } from '~/common/constants';
 
 interface errorType {
   error: boolean;
@@ -32,7 +31,7 @@ const useCallApiOnce = <T,>(
           setLoading(false);
         }
       } catch (error: any) {
-        setError({ error: true, message: error?.message || ERROR_TEXT });
+        setError({ error: true, message: error?.message || null });
       }
     })();
 

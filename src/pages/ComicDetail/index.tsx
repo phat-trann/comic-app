@@ -1,16 +1,17 @@
 import { useContext } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ERROR_TEXT } from '~/common/constants';
 import { changeWidthImageUrl, diffDate, formatView } from '~/common/helpers/formatData';
 import { ComicContext } from '~/context/ComicContext';
 import { useCallApiOnce } from '~/hooks';
+import { useTranslation } from 'react-i18next';
 
 const ComicDetail = () => {
   const { id } = useParams();
+  const { t } = useTranslation();
   const { comic: currentComic, fetchData } = useContext(ComicContext);
   const { data, loading, error } = useCallApiOnce(async () => await fetchData(id), [currentComic]);
 
-  if (error?.error || data?.error) return <div>{error?.message || ERROR_TEXT}</div>;
+  if (error?.error || data?.error) return <div>{error?.message || t('common.error')}</div>;
 
   return (
     <div className="">
