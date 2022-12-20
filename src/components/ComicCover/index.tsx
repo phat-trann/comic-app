@@ -50,9 +50,10 @@ const TitleOutside: React.FC<{ className: string; lastChapter?: chapterType; nam
 const ComicCover: React.FC<{
   imageClass: string;
   titleClass: string;
+  avatarSize?: number;
   comicData: comicDataType | null;
   showNewest?: boolean;
-}> = ({ imageClass, titleClass, comicData, showNewest = false }) => {
+}> = ({ imageClass, titleClass, comicData, avatarSize, showNewest = false }) => {
   const lastChapter = comicData?.chapters[comicData.chapters.length - 1];
 
   return (
@@ -62,7 +63,7 @@ const ComicCover: React.FC<{
           {comicData ? (
             <LazyLoadImage
               alt={comicData?.name}
-              src={changeWidthImageUrl(comicData.avatar, 200)}
+              src={changeWidthImageUrl(comicData.avatar, avatarSize || 400)}
               placeholder={
                 <img
                   src={changeWidthImageUrl(comicData.avatar, 10)}
