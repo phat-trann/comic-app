@@ -12,9 +12,11 @@ const config = {
   lg: 3,
   xl: 4,
   '2xl': 5,
+  xxl: 6,
 };
 
 const getBreakPoint = (width: number) => {
+  if (width >= 1600) return config['xxl'];
   if (width >= 1536) return config['2xl'];
   if (width >= 1280) return config['xl'];
   if (width >= 1024) return config['lg'];

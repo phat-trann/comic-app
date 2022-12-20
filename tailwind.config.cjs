@@ -2,7 +2,11 @@
 module.exports = {
   content: ['./index.html', './src/**/*.{ts,tsx}', './src/**/**/*.{ts,tsx}'],
   theme: {
-    extend: {},
+    extend: {
+      screens: {
+        xxl: '1600px',
+      },
+    },
   },
   plugins: [require('@tailwindcss/line-clamp'), require('daisyui')],
 };

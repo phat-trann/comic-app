@@ -39,7 +39,7 @@ const Chapters = () => {
                     placeholder={<img src={changeWidthImageUrl(el, 10)} className="w-full" />}
                     width={384}
                     height={height}
-                    threshold={100}
+                    threshold={height}
                     className="w-full"
                     wrapperClassName="h-fit w-full"
                     afterLoad={() => {
