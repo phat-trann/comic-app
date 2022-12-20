@@ -1,4 +1,4 @@
-import { useContext, useMemo } from 'react';
+import { useContext } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ERROR_TEXT } from '~/common/constants';
 import { changeWidthImageUrl, diffDate, formatView } from '~/common/helpers/formatData';

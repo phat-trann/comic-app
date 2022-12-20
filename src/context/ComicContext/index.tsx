@@ -1,16 +1,23 @@
 import React, { useCallback, useReducer } from 'react';
 import { ACTIONS } from '~/common/constants';
-import { comicDataType } from '~/common/types';
+import { chapterDetailType, comicDataType } from '~/common/types';
 import comicService from '~/services/comic.service';
 
 interface stateType {
   comic: comicDataType | null;
+  chapters: {
+    [name: string]: chapterDetailType;
+  };
   fetchData: Function;
+  getChapter: Function;
 }
 
 interface actionType {
   type: string;
-  payload?: comicDataType;
+  payload: {
+    chap?: string;
+    data: comicDataType | chapterDetailType;
+  };
 }
 
 const reducer = (state: stateType, action: actionType): stateType => {
@@ -18,7 +25,15 @@ const reducer = (state: stateType, action: actionType): stateType => {
     case ACTIONS.LOAD_COMIC:
       return {
         ...state,
-        comic: action.payload || state.comic,
+        comic: (action.payload.data as comicDataType) || state.comic,
+      };
+    case ACTIONS.LOAD_CHAPTER:
+      return {
+        ...state,
+        chapters: {
+          ...state.chapters,
+          [action.payload?.chap || '']: action.payload.data as chapterDetailType,
+        },
       };
     default:
       return state;
@@ -27,7 +42,9 @@ const reducer = (state: stateType, action: actionType): stateType => {
 
 const initialState: stateType = {
   comic: null,
+  chapters: {},
   fetchData: () => {},
+  getChapter: () => {},
 };
 
 export const ComicContext = React.createContext(initialState);
@@ -41,13 +58,30 @@ const ComicContextProvider = ({ children }: { children: JSX.Element }) => {
     if (!error)
       dispatch({
         type: ACTIONS.LOAD_COMIC,
-        payload: data,
+        payload: {
+          data,
+        },
+      });
+  }, []);
+
+  const getChapter = useCallback(async (id: string, chap: string) => {
+    const { error, data } = await comicService.getChapterDetail(id, chap);
+
+    if (!error)
+      dispatch({
+        type: ACTIONS.LOAD_CHAPTER,
+        payload: {
+          chap: chap,
+          data: data,
+        },
       });
   }, []);
 
   const value = {
     comic: state.comic,
+    chapters: state.chapters,
     fetchData,
+    getChapter,
   };
 
   return <ComicContext.Provider value={value}>{children}</ComicContext.Provider>;

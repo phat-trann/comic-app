@@ -59,7 +59,7 @@ const ComicCover: React.FC<{
                     className="h-full w-full object-cover"
                   />
                 }
-                height={245}
+                threshold={240}
                 className="h-full w-full object-cover"
               />
             ) : (
