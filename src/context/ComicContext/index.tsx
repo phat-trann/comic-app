@@ -1,7 +1,7 @@
 import React, { useCallback, useReducer } from 'react';
 import { ACTIONS } from '~/common/constants';
 import { chapterDetailType, comicDataType } from '~/common/types';
-import comicService from '~/services/comic.service';
+import { getComicDetail, getChapterDetail } from '~/services/comic.service';
 
 interface stateType {
   comic: comicDataType | null;
@@ -53,7 +53,7 @@ const ComicContextProvider = ({ children }: { children: JSX.Element }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const fetchData = useCallback(async (id: string) => {
-    const { error, data } = await comicService.getComicDetail(id);
+    const { error, data } = await getComicDetail(id);
 
     if (!error)
       dispatch({
@@ -65,7 +65,7 @@ const ComicContextProvider = ({ children }: { children: JSX.Element }) => {
   }, []);
 
   const getChapter = useCallback(async (id: string, chap: string) => {
-    const { error, data } = await comicService.getChapterDetail(id, chap);
+    const { error, data } = await getChapterDetail(id, chap);
 
     if (!error)
       dispatch({

@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import { AppContext } from '~/context/AppContext';
 import Carousel from '~/components/AutoCarousel';
 import ComicCover from '~/components/ComicCover';
@@ -6,12 +6,26 @@ import { useCallApiOnce } from '~/hooks';
 import { useTranslation } from 'react-i18next';
 import Star from '~/icons/Star';
 import Fire from '~/icons/Fire';
+import { Pagination } from 'antd';
 
 function Home() {
-  const { comics, mostViewedComics, fetchData } = useContext(AppContext);
+  const {
+    mostViewedComics,
+    fetchData,
+    loadPage,
+    pageComics,
+    allComicsCount,
+    comicsInPage,
+    currentPage,
+  } = useContext(AppContext);
   const { t } = useTranslation();
+  const comics = useMemo(() => pageComics[currentPage], [currentPage]);
 
-  useCallApiOnce(async () => await fetchData(), [comics, mostViewedComics]);
+  const { loading, error } = useCallApiOnce(async () => {
+    await fetchData(20, 30);
+  }, [comics, mostViewedComics]);
+
+  if (loading || error.error) return <div>{error.message || 'Loading...'}</div>;
 
   return (
     <div className="w-100 pt-4 pb-10">
@@ -38,6 +52,14 @@ function Home() {
           />
         </div>
       </div>
+      <Pagination
+        defaultCurrent={currentPage}
+        total={allComicsCount}
+        defaultPageSize={comicsInPage}
+        onChange={async (page, pageSize) => {
+          await loadPage(page, pageSize, pageComics);
+        }}
+      />
       <div className="pt-4">
         <div className="px-2 font-bold">
           <h1 className="flex items-center text-red-500">

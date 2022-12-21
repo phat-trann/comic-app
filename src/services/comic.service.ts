@@ -1,11 +1,10 @@
-import { URLs } from '~/common/constants';
 import { chapterDetailType, comicDataType } from '~/common/types';
 import api from './api';
 
 const searchComic = async (paramSearch: {
   [key: string]: string | number;
 }): Promise<{ data: comicDataType[]; error: boolean }> => {
-  const res = await api.get(URLs.SEARCH, {
+  const res = await api.get('/comic/search', {
     params: {
       ...paramSearch,
     },
@@ -14,8 +13,8 @@ const searchComic = async (paramSearch: {
   return res.data;
 };
 
-const getNewUploadComic = (limit: number) => {
-  return searchComic({ limit, sort: 'lastUpload', sortType: 'desc' });
+const getNewUploadComic = (limit: number, skip: number = 0) => {
+  return searchComic({ limit, sort: 'lastUpload', sortType: 'desc', skip });
 };
 
 const getMostViewedComics = (limit: number) => {
@@ -36,9 +35,10 @@ const getChapterDetail = async (
   return res.data;
 };
 
-export default {
-  getNewUploadComic,
-  getMostViewedComics,
-  getComicDetail,
-  getChapterDetail,
+const getComicsCount = async (): Promise<{ data: number; error: boolean }> => {
+  const res = await api.get('/comic/count');
+
+  return res.data;
 };
+
+export { getNewUploadComic, getMostViewedComics, getComicDetail, getChapterDetail, getComicsCount };

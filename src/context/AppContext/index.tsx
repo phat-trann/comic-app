@@ -1,30 +1,72 @@
 import React, { useCallback, useReducer } from 'react';
 import { ACTIONS } from '~/common/constants';
 import { comicDataType } from '~/common/types';
-import comicService from '~/services/comic.service';
+import { getNewUploadComic, getMostViewedComics, getComicsCount } from '~/services/comic.service';
 
 interface stateType {
-  comics: comicDataType[];
   mostViewedComics: comicDataType[];
+  pageComics: {
+    [key: number]: comicDataType[];
+  };
   fetchData: Function;
+  loadPage: Function;
+}
+
+interface numberStateType {
+  allComicsCount: number;
+  comicsInPage: number;
+  currentPage: number;
 }
 
 interface actionType {
   type: string;
-  payload?: comicDataType[];
+  payload: {
+    comicData: comicDataType[];
+    number: number;
+  };
+}
+
+interface actionNumberType {
+  type: string;
+  payload: number;
 }
 
 const reducer = (state: stateType, action: actionType): stateType => {
   switch (action.type) {
-    case ACTIONS.LOAD_COMICS:
+    case ACTIONS.UPDATE_PAGE_COMICS:
       return {
         ...state,
-        comics: action.payload || state.comics,
+        pageComics: {
+          ...state.pageComics,
+          [action.payload.number]: action.payload.comicData,
+        },
       };
     case ACTIONS.LOAD_MOST_VIEWED_COMICS:
       return {
         ...state,
-        mostViewedComics: action.payload || state.mostViewedComics,
+        mostViewedComics: action.payload.comicData,
+      };
+    default:
+      return state;
+  }
+};
+
+const numberReducer = (state: numberStateType, action: actionNumberType): numberStateType => {
+  switch (action.type) {
+    case ACTIONS.LOAD_COMIC_IN_PAGE:
+      return {
+        ...state,
+        comicsInPage: action.payload,
+      };
+    case ACTIONS.LOAD_ALL_COMICS_COUNT:
+      return {
+        ...state,
+        allComicsCount: action.payload,
+      };
+    case ACTIONS.UPDATE_CURRENT_PAGE:
+      return {
+        ...state,
+        currentPage: action.payload,
       };
     default:
       return state;
@@ -32,49 +74,108 @@ const reducer = (state: stateType, action: actionType): stateType => {
 };
 
 const initialState: stateType = {
-  comics: [],
   mostViewedComics: [],
   fetchData: () => {},
+  loadPage: () => {},
+  pageComics: {
+    0: [],
+  },
 };
 
-export const AppContext = React.createContext(initialState);
+const numberInitialState: numberStateType = {
+  allComicsCount: 0,
+  comicsInPage: 0,
+  currentPage: 0,
+};
+
+export const AppContext = React.createContext({ ...initialState, ...numberInitialState });
 
 const AppContextProvider = ({ children }: { children: JSX.Element }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [numberState, numberDispatch] = useReducer(numberReducer, numberInitialState);
 
   const fetchData = useCallback(
-    async ({
-      mostViewedCount,
-      newUploadCount,
-    }: {
-      mostViewedCount?: number;
-      newUploadCount?: number;
-    }) => {
-      const [{ error, data }, { error: mostViewedError, data: mostViewedData }] = await Promise.all(
-        [
-          comicService.getNewUploadComic(newUploadCount || 40),
-          comicService.getMostViewedComics(mostViewedCount || 30),
-        ],
-      );
+    async (newUploadCount: number = 40, mostViewedCount: number = 30) => {
+      const [
+        { error, data },
+        { error: mostViewedError, data: mostViewedData },
+        { error: countError, data: countData },
+      ] = await Promise.all([
+        getNewUploadComic(newUploadCount),
+        getMostViewedComics(mostViewedCount),
+        getComicsCount(),
+      ]);
 
-      if (!error)
-        dispatch({
-          type: ACTIONS.LOAD_COMICS,
-          payload: data,
+      numberDispatch({
+        type: ACTIONS.LOAD_COMIC_IN_PAGE,
+        payload: newUploadCount,
+      });
+
+      if (!countError) {
+        numberDispatch({
+          type: ACTIONS.LOAD_ALL_COMICS_COUNT,
+          payload: countData,
         });
+      }
+
+      if (!error) {
+        dispatch({
+          type: ACTIONS.UPDATE_PAGE_COMICS,
+          payload: {
+            number: 1,
+            comicData: data,
+          },
+        });
+
+        numberDispatch({
+          type: ACTIONS.UPDATE_CURRENT_PAGE,
+          payload: 1,
+        });
+      }
       if (!mostViewedError)
         dispatch({
           type: ACTIONS.LOAD_MOST_VIEWED_COMICS,
-          payload: mostViewedData,
+          payload: {
+            comicData: mostViewedData,
+            number: 1,
+          },
         });
     },
     [],
   );
 
+  const loadPage = useCallback(
+    async (pageIndex: number, pageSize: number, pageComics: comicDataType[]) => {
+      if (pageComics[pageIndex] === undefined) {
+        const { error, data } = await getNewUploadComic(pageSize, pageSize * (pageIndex - 1));
+
+        if (!error) {
+          dispatch({
+            type: ACTIONS.UPDATE_PAGE_COMICS,
+            payload: {
+              number: pageIndex,
+              comicData: data,
+            },
+          });
+        }
+      }
+
+      numberDispatch({
+        type: ACTIONS.UPDATE_CURRENT_PAGE,
+        payload: pageIndex,
+      });
+    },
+    [],
+  );
+
   const value = {
-    comics: state.comics,
-    mostViewedComics: state.mostViewedComics,
     fetchData,
+    loadPage,
+    mostViewedComics: state.mostViewedComics,
+    pageComics: state.pageComics,
+    allComicsCount: numberState.allComicsCount,
+    comicsInPage: numberState.comicsInPage,
+    currentPage: numberState.currentPage,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
