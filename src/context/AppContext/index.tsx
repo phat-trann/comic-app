@@ -1,4 +1,4 @@
-import React, { useCallback, useReducer } from 'react';
+import React, { useCallback, useReducer, useState } from 'react';
 import { ACTIONS } from '~/common/constants';
 import { comicDataType } from '~/common/types';
 import { getNewUploadComic, getMostViewedComics, getComicsCount } from '~/services/comic.service';
@@ -88,14 +88,20 @@ const numberInitialState: numberStateType = {
   currentPage: 0,
 };
 
-export const AppContext = React.createContext({ ...initialState, ...numberInitialState });
+export const AppContext = React.createContext({
+  ...initialState,
+  ...numberInitialState,
+  loading: false,
+});
 
 const AppContextProvider = ({ children }: { children: JSX.Element }) => {
+  const [loading, setLoading] = useState(false);
   const [state, dispatch] = useReducer(reducer, initialState);
   const [numberState, numberDispatch] = useReducer(numberReducer, numberInitialState);
 
   const fetchData = useCallback(
     async (newUploadCount: number = 40, mostViewedCount: number = 30) => {
+      setLoading(true);
       const [
         { error, data },
         { error: mostViewedError, data: mostViewedData },
@@ -140,12 +146,14 @@ const AppContextProvider = ({ children }: { children: JSX.Element }) => {
             number: 1,
           },
         });
+      setLoading(false);
     },
     [],
   );
 
   const loadPage = useCallback(
     async (pageIndex: number, pageSize: number, pageComics: comicDataType[]) => {
+      setLoading(true);
       if (pageComics[pageIndex] === undefined) {
         const { error, data } = await getNewUploadComic(pageSize, pageSize * (pageIndex - 1));
 
@@ -164,6 +172,8 @@ const AppContextProvider = ({ children }: { children: JSX.Element }) => {
         type: ACTIONS.UPDATE_CURRENT_PAGE,
         payload: pageIndex,
       });
+
+      setLoading(false);
     },
     [],
   );
@@ -176,6 +186,7 @@ const AppContextProvider = ({ children }: { children: JSX.Element }) => {
     allComicsCount: numberState.allComicsCount,
     comicsInPage: numberState.comicsInPage,
     currentPage: numberState.currentPage,
+    loading,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

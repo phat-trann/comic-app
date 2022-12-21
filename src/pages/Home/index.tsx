@@ -1,4 +1,4 @@
-import { useContext, useMemo } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import { AppContext } from '~/context/AppContext';
 import Carousel from '~/components/AutoCarousel';
 import ComicCover from '~/components/ComicCover';
@@ -6,7 +6,7 @@ import { useCallApiOnce } from '~/hooks';
 import { useTranslation } from 'react-i18next';
 import Star from '~/icons/Star';
 import Fire from '~/icons/Fire';
-import { Pagination } from 'antd';
+import Pagination from '~/components/Pagination';
 
 function Home() {
   const {
@@ -17,18 +17,36 @@ function Home() {
     allComicsCount,
     comicsInPage,
     currentPage,
+    loading,
   } = useContext(AppContext);
   const { t } = useTranslation();
-  const comics = useMemo(() => pageComics[currentPage], [currentPage]);
+  const comics = useMemo(() => {
+    if (loading || currentPage === 0) return new Array(20).fill(null);
+    return pageComics[currentPage];
+  }, [currentPage, comicsInPage, loading]);
 
-  const { loading, error } = useCallApiOnce(async () => {
+  useCallApiOnce(async () => {
     await fetchData(20, 30);
   }, [comics, mostViewedComics]);
 
-  if (loading || error.error) return <div>{error.message || 'Loading...'}</div>;
+  console.log({
+    mostViewedComics,
+    fetchData,
+    loadPage,
+    pageComics,
+    allComicsCount,
+    comicsInPage,
+    currentPage,
+    loading,
+  });
+
+  const handleChangePage = async (page: number, pageSize: number) => {
+    window.scrollTo(0, 0);
+    await loadPage(page, pageSize, pageComics);
+  };
 
   return (
-    <div className="w-100 pt-4 pb-10">
+    <div className="w-100 pt-4 pb-14">
       <div>
         <div className="px-2 font-bold">
           <h1 className="flex items-center text-amber-500">
@@ -39,27 +57,31 @@ function Home() {
           </h1>
         </div>
         <div className="p-1">
-          <Carousel
-            dataList={mostViewedComics}
-            autoScroll={true}
-            render={([comic, index, defaultClass]) => (
-              <div key={comic?._id || index} className={defaultClass + 'w-1/3'}>
-                <div className="w-full p-1">
-                  <ComicCover comicData={comic} imageClass="h-52" titleClass="" />
+          {loading ? (
+            <div className="flex w-full flex-wrap">
+              {new Array(3).fill(null).map((item, index) => (
+                <div key={index} className="w-1/3">
+                  <div className="w-full p-1">
+                    <ComicCover comicData={item} imageClass="h-52" titleClass="" />
+                  </div>
                 </div>
-              </div>
-            )}
-          />
+              ))}
+            </div>
+          ) : (
+            <Carousel
+              dataList={mostViewedComics}
+              autoScroll={true}
+              render={([comic, index, defaultClass]) => (
+                <div key={comic?._id || index} className={defaultClass + 'w-1/3'}>
+                  <div className="w-full p-1">
+                    <ComicCover comicData={comic} imageClass="h-52" titleClass="" />
+                  </div>
+                </div>
+              )}
+            />
+          )}
         </div>
       </div>
-      <Pagination
-        defaultCurrent={currentPage}
-        total={allComicsCount}
-        defaultPageSize={comicsInPage}
-        onChange={async (page, pageSize) => {
-          await loadPage(page, pageSize, pageComics);
-        }}
-      />
       <div className="pt-4">
         <div className="px-2 font-bold">
           <h1 className="flex items-center text-red-500">
@@ -83,6 +105,18 @@ function Home() {
             </div>
           ))}
         </div>
+      </div>
+      <div className="flex items-center justify-center align-middle">
+        {!!(currentPage && allComicsCount && comicsInPage) && (
+          <Pagination
+            defaultCurrent={currentPage}
+            total={allComicsCount}
+            defaultPageSize={comicsInPage}
+            onChange={handleChangePage}
+            colorActive="red-500"
+            colorHover="red-400"
+          />
+        )}
       </div>
     </div>
   );
