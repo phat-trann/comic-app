@@ -10,8 +10,9 @@ import Pagination from '~/components/Pagination';
 
 function Home() {
   const {
-    mostViewedComics,
-    fetchData,
+    mostViewedComics: currentMostViewedComics,
+    fetchRecentlyData,
+    fetchMostViewedData,
     loadPage,
     comics: currentComics,
     allComicsCount,
@@ -20,14 +21,21 @@ function Home() {
     loading,
   } = useContext(AppContext);
   const { t } = useTranslation();
+  const { loading: loadingRecently } = useCallApiOnce(async () => {
+    await fetchRecentlyData(20);
+  }, [currentComics]);
   const comics = useMemo(() => {
-    if (loading || currentComics.length === 0) return new Array(20).fill(null);
+    if (loading || loadingRecently || currentComics.length === 0) return new Array(20).fill(null);
     return currentComics;
-  }, [loading, currentComics]);
+  }, [loading, loadingRecently, currentComics]);
+  const mostViewedComics = useMemo(() => {
+    if (currentMostViewedComics.length === 0) return new Array(3).fill(null);
+    return currentMostViewedComics;
+  }, [currentMostViewedComics]);
 
   useCallApiOnce(async () => {
-    await fetchData(20, 30);
-  }, [currentComics, mostViewedComics]);
+    await fetchMostViewedData(30);
+  }, [currentMostViewedComics]);
 
   const handleChangePage = async (page: number, pageSize: number) => {
     window.scrollTo(0, 0);
@@ -46,29 +54,17 @@ function Home() {
           </h1>
         </div>
         <div className="p-1">
-          {loading && !mostViewedComics.length ? (
-            <div className="flex w-full flex-wrap">
-              {new Array(3).fill(null).map((item, index) => (
-                <div key={index} className="w-1/3">
-                  <div className="w-full p-1">
-                    <ComicCover comicData={item} imageClass="h-52" titleClass="" />
-                  </div>
+          <Carousel
+            dataList={mostViewedComics}
+            autoScroll={true}
+            render={([comic, index, defaultClass]) => (
+              <div key={comic?._id || index} className={defaultClass + 'w-1/3'}>
+                <div className="w-full p-1">
+                  <ComicCover comicData={comic} imageClass="h-52" titleClass="" />
                 </div>
-              ))}
-            </div>
-          ) : (
-            <Carousel
-              dataList={mostViewedComics}
-              autoScroll={true}
-              render={([comic, index, defaultClass]) => (
-                <div key={comic?._id || index} className={defaultClass + 'w-1/3'}>
-                  <div className="w-full p-1">
-                    <ComicCover comicData={comic} imageClass="h-52" titleClass="" />
-                  </div>
-                </div>
-              )}
-            />
-          )}
+              </div>
+            )}
+          />
         </div>
       </div>
       <div className="pt-4">

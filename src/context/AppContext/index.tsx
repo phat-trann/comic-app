@@ -6,7 +6,8 @@ import { getNewUploadComic, getMostViewedComics, getComicsCount } from '~/servic
 interface stateType {
   comics: comicDataType[];
   mostViewedComics: comicDataType[];
-  fetchData: Function;
+  fetchMostViewedData: Function;
+  fetchRecentlyData: Function;
   loadPage: Function;
 }
 
@@ -68,7 +69,8 @@ const numberReducer = (state: numberStateType, action: actionNumberType): number
 const initialState: stateType = {
   comics: [],
   mostViewedComics: [],
-  fetchData: () => {},
+  fetchRecentlyData: () => {},
+  fetchMostViewedData: () => {},
   loadPage: () => {},
 };
 
@@ -90,52 +92,48 @@ const AppContextProvider = ({ children }: { children: JSX.Element }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [numberState, numberDispatch] = useReducer(numberReducer, numberInitialState);
 
-  const fetchData = useCallback(
-    async (newUploadCount: number = 40, mostViewedCount: number = 30) => {
-      setLoading(true);
-      const [
-        { error, data },
-        { error: mostViewedError, data: mostViewedData },
-        { error: countError, data: countData },
-      ] = await Promise.all([
-        getNewUploadComic(newUploadCount),
-        getMostViewedComics(mostViewedCount),
-        getComicsCount(),
-      ]);
+  const fetchMostViewedData = useCallback(async (mostViewedCount: number = 30) => {
+    setLoading(true);
+    const { error, data } = await getMostViewedComics(mostViewedCount);
+    const { error: countError, data: countData } = await getComicsCount();
 
+    if (!countError) {
       numberDispatch({
-        type: ACTIONS.LOAD_COMIC_IN_PAGE,
-        payload: newUploadCount,
+        type: ACTIONS.LOAD_ALL_COMICS_COUNT,
+        payload: countData,
+      });
+    }
+
+    if (!error)
+      dispatch({
+        type: ACTIONS.LOAD_MOST_VIEWED_COMICS,
+        payload: data,
+      });
+    setLoading(false);
+  }, []);
+
+  const fetchRecentlyData = useCallback(async (newUploadCount: number = 40) => {
+    setLoading(true);
+    const { error, data } = await getNewUploadComic(newUploadCount);
+
+    numberDispatch({
+      type: ACTIONS.LOAD_COMIC_IN_PAGE,
+      payload: newUploadCount,
+    });
+
+    if (!error) {
+      dispatch({
+        type: ACTIONS.UPDATE_PAGE_COMICS,
+        payload: data,
       });
 
-      if (!countError) {
-        numberDispatch({
-          type: ACTIONS.LOAD_ALL_COMICS_COUNT,
-          payload: countData,
-        });
-      }
-
-      if (!error) {
-        dispatch({
-          type: ACTIONS.UPDATE_PAGE_COMICS,
-          payload: data,
-        });
-
-        numberDispatch({
-          type: ACTIONS.UPDATE_CURRENT_PAGE,
-          payload: 1,
-        });
-      }
-      if (!mostViewedError)
-        dispatch({
-          type: ACTIONS.LOAD_MOST_VIEWED_COMICS,
-          payload: mostViewedData,
-        });
-      setLoading(false);
-    },
-    [],
-  );
-
+      numberDispatch({
+        type: ACTIONS.UPDATE_CURRENT_PAGE,
+        payload: 1,
+      });
+    }
+    setLoading(false);
+  }, []);
   const loadPage = useCallback(async (pageIndex: number, pageSize: number) => {
     setLoading(true);
     const { error, data } = await getNewUploadComic(pageSize, pageSize * (pageIndex - 1));
@@ -158,7 +156,6 @@ const AppContextProvider = ({ children }: { children: JSX.Element }) => {
   const resetHomepage = useCallback((currentPage: number) => {
     setLoading(false);
 
-    console.log(currentPage);
     if (currentPage !== 1) {
       dispatch({
         type: ACTIONS.UPDATE_PAGE_COMICS,
@@ -172,7 +169,8 @@ const AppContextProvider = ({ children }: { children: JSX.Element }) => {
   }, []);
 
   const value = {
-    fetchData,
+    fetchMostViewedData,
+    fetchRecentlyData,
     loadPage,
     mostViewedComics: state.mostViewedComics,
     comics: state.comics,
