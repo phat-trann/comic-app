@@ -4,10 +4,8 @@ import { comicDataType } from '~/common/types';
 import { getNewUploadComic, getMostViewedComics, getComicsCount } from '~/services/comic.service';
 
 interface stateType {
+  comics: comicDataType[];
   mostViewedComics: comicDataType[];
-  pageComics: {
-    [key: number]: comicDataType[];
-  };
   fetchData: Function;
   loadPage: Function;
 }
@@ -20,10 +18,7 @@ interface numberStateType {
 
 interface actionType {
   type: string;
-  payload: {
-    comicData: comicDataType[];
-    number: number;
-  };
+  payload: comicDataType[];
 }
 
 interface actionNumberType {
@@ -36,15 +31,12 @@ const reducer = (state: stateType, action: actionType): stateType => {
     case ACTIONS.UPDATE_PAGE_COMICS:
       return {
         ...state,
-        pageComics: {
-          ...state.pageComics,
-          [action.payload.number]: action.payload.comicData,
-        },
+        comics: action.payload,
       };
     case ACTIONS.LOAD_MOST_VIEWED_COMICS:
       return {
         ...state,
-        mostViewedComics: action.payload.comicData,
+        mostViewedComics: action.payload,
       };
     default:
       return state;
@@ -74,12 +66,10 @@ const numberReducer = (state: numberStateType, action: actionNumberType): number
 };
 
 const initialState: stateType = {
+  comics: [],
   mostViewedComics: [],
   fetchData: () => {},
   loadPage: () => {},
-  pageComics: {
-    0: [],
-  },
 };
 
 const numberInitialState: numberStateType = {
@@ -92,6 +82,7 @@ export const AppContext = React.createContext({
   ...initialState,
   ...numberInitialState,
   loading: true,
+  resetHomepage: (arg: number) => {},
 });
 
 const AppContextProvider = ({ children }: { children: JSX.Element }) => {
@@ -127,10 +118,7 @@ const AppContextProvider = ({ children }: { children: JSX.Element }) => {
       if (!error) {
         dispatch({
           type: ACTIONS.UPDATE_PAGE_COMICS,
-          payload: {
-            number: 1,
-            comicData: data,
-          },
+          payload: data,
         });
 
         numberDispatch({
@@ -141,52 +129,58 @@ const AppContextProvider = ({ children }: { children: JSX.Element }) => {
       if (!mostViewedError)
         dispatch({
           type: ACTIONS.LOAD_MOST_VIEWED_COMICS,
-          payload: {
-            comicData: mostViewedData,
-            number: 1,
-          },
+          payload: mostViewedData,
         });
       setLoading(false);
     },
     [],
   );
 
-  const loadPage = useCallback(
-    async (pageIndex: number, pageSize: number, pageComics: comicDataType[]) => {
-      setLoading(true);
-      if (pageComics[pageIndex] === undefined) {
-        const { error, data } = await getNewUploadComic(pageSize, pageSize * (pageIndex - 1));
+  const loadPage = useCallback(async (pageIndex: number, pageSize: number) => {
+    setLoading(true);
+    const { error, data } = await getNewUploadComic(pageSize, pageSize * (pageIndex - 1));
 
-        if (!error) {
-          dispatch({
-            type: ACTIONS.UPDATE_PAGE_COMICS,
-            payload: {
-              number: pageIndex,
-              comicData: data,
-            },
-          });
-        }
-      }
+    if (!error) {
+      dispatch({
+        type: ACTIONS.UPDATE_PAGE_COMICS,
+        payload: data,
+      });
+    }
 
+    numberDispatch({
+      type: ACTIONS.UPDATE_CURRENT_PAGE,
+      payload: pageIndex,
+    });
+
+    setLoading(false);
+  }, []);
+
+  const resetHomepage = useCallback((currentPage: number) => {
+    setLoading(false);
+
+    console.log(currentPage);
+    if (currentPage !== 1) {
+      dispatch({
+        type: ACTIONS.UPDATE_PAGE_COMICS,
+        payload: [],
+      });
       numberDispatch({
         type: ACTIONS.UPDATE_CURRENT_PAGE,
-        payload: pageIndex,
+        payload: 1,
       });
-
-      setLoading(false);
-    },
-    [],
-  );
+    }
+  }, []);
 
   const value = {
     fetchData,
     loadPage,
     mostViewedComics: state.mostViewedComics,
-    pageComics: state.pageComics,
+    comics: state.comics,
     allComicsCount: numberState.allComicsCount,
     comicsInPage: numberState.comicsInPage,
     currentPage: numberState.currentPage,
     loading,
+    resetHomepage,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

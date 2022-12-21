@@ -13,7 +13,7 @@ function Home() {
     mostViewedComics,
     fetchData,
     loadPage,
-    pageComics,
+    comics: currentComics,
     allComicsCount,
     comicsInPage,
     currentPage,
@@ -21,28 +21,17 @@ function Home() {
   } = useContext(AppContext);
   const { t } = useTranslation();
   const comics = useMemo(() => {
-    if (loading || currentPage === 0) return new Array(20).fill(null);
-    return pageComics[currentPage];
-  }, [currentPage, comicsInPage, loading]);
+    if (loading || currentComics.length === 0) return new Array(20).fill(null);
+    return currentComics;
+  }, [loading, currentComics]);
 
   useCallApiOnce(async () => {
     await fetchData(20, 30);
-  }, [comics, mostViewedComics]);
-
-  console.log({
-    mostViewedComics,
-    fetchData,
-    loadPage,
-    pageComics,
-    allComicsCount,
-    comicsInPage,
-    currentPage,
-    loading,
-  });
+  }, [currentComics, mostViewedComics]);
 
   const handleChangePage = async (page: number, pageSize: number) => {
     window.scrollTo(0, 0);
-    await loadPage(page, pageSize, pageComics);
+    await loadPage(page, pageSize);
   };
 
   return (
