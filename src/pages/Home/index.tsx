@@ -57,7 +57,7 @@ function Home() {
           </h1>
         </div>
         <div className="p-1">
-          {loading ? (
+          {loading && !mostViewedComics.length ? (
             <div className="flex w-full flex-wrap">
               {new Array(3).fill(null).map((item, index) => (
                 <div key={index} className="w-1/3">
@@ -113,8 +113,6 @@ function Home() {
             total={allComicsCount}
             defaultPageSize={comicsInPage}
             onChange={handleChangePage}
-            colorActive="red-500"
-            colorHover="red-400"
           />
         )}
       </div>

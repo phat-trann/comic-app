@@ -91,11 +91,11 @@ const numberInitialState: numberStateType = {
 export const AppContext = React.createContext({
   ...initialState,
   ...numberInitialState,
-  loading: false,
+  loading: true,
 });
 
 const AppContextProvider = ({ children }: { children: JSX.Element }) => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [state, dispatch] = useReducer(reducer, initialState);
   const [numberState, numberDispatch] = useReducer(numberReducer, numberInitialState);
 
