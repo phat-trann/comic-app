@@ -9,4 +9,12 @@ const title = {
   completed: 'Completed comics',
 };
 
-export default { common, title };
+const menu = {
+  home: 'Home',
+  follow: 'Follow',
+  search: 'Search',
+  activity: 'Activity',
+  setting: 'Setting',
+};
+
+export default { common, title, menu };

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Home from '~/icons/Home';
 import Activity from '~/icons/Activity';
@@ -6,35 +6,38 @@ import Follow from '~/icons/Follow';
 import Search from '~/icons/Search';
 import Setting from '~/icons/Setting';
 import { AppContext } from '~/context/AppContext';
+import { useTranslation } from 'react-i18next';
 
 const Header = () => {
+  const { t } = useTranslation();
   const [logoName, setLogoName] = useState('/images/logo-black.png');
   const location = useLocation();
+
   const navigate = useNavigate();
   const { resetHomepage, currentPage } = useContext(AppContext);
   const menu = [
     {
-      text: 'Home',
+      text: t('menu.home'),
       location: '/',
       item: <Home />,
     },
     {
-      text: 'Follow',
+      text: t('menu.follow'),
       location: '/follow',
       item: <Follow />,
     },
     {
-      text: 'Search',
+      text: t('menu.search'),
       location: '/search',
       item: <Search />,
     },
     {
-      text: 'Activity',
+      text: t('menu.activity'),
       location: '/activity',
       item: <Activity />,
     },
     {
-      text: 'Setting',
+      text: t('menu.setting'),
       location: '/setting',
       item: <Setting />,
     },
