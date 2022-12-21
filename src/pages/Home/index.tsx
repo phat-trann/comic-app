@@ -1,4 +1,4 @@
-import { useContext, useMemo, useState } from 'react';
+import { useCallback, useContext, useMemo, useState } from 'react';
 import { AppContext } from '~/context/AppContext';
 import Carousel from '~/components/AutoCarousel';
 import ComicCover from '~/components/ComicCover';
@@ -20,6 +20,7 @@ function Home() {
     currentPage,
     loading,
   } = useContext(AppContext);
+  console.time('home');
   const { t } = useTranslation();
   const { loading: loadingRecently } = useCallApiOnce(async () => {
     await fetchRecentlyData(20);
@@ -37,10 +38,13 @@ function Home() {
     await fetchMostViewedData(30);
   }, [currentMostViewedComics]);
 
-  const handleChangePage = async (page: number, pageSize: number) => {
-    window.scrollTo(0, 0);
-    await loadPage(page, pageSize);
-  };
+  const handleChangePage = useCallback(
+    async (page: number, pageSize: number) => {
+      window.scrollTo(0, 0);
+      await loadPage(page, pageSize);
+    },
+    [comicsInPage],
+  );
 
   return (
     <div className="w-100 pt-4 pb-14">
@@ -92,7 +96,7 @@ function Home() {
         </div>
       </div>
       <div className="flex items-center justify-center align-middle">
-        {!!(currentPage && allComicsCount && comicsInPage) && (
+        {!loading && !loadingRecently && !!(currentPage && allComicsCount && comicsInPage) && (
           <Pagination
             defaultCurrent={currentPage}
             total={allComicsCount}
