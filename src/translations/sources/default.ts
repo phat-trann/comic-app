@@ -17,4 +17,9 @@ const menu = {
   setting: 'Setting',
 };
 
-export default { common, title, menu };
+const info = {
+  email: 'Email: phat.tran.fit@gmail.com',
+  company: 'Made by PDKompany',
+};
+
+export default { common, title, menu, info };

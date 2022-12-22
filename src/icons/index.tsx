@@ -2,6 +2,7 @@ export { default as Activity } from './Activity';
 export { default as User } from './User';
 export { default as ChevronLeft } from './ChevronLeft';
 export { default as ChevronRight } from './ChevronRight';
+export { default as ChevronUp } from './ChevronUp';
 export { default as Fire } from './Fire';
 export { default as Follow } from './Follow';
 export { default as Home } from './Home';
