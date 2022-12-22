@@ -1,7 +1,6 @@
 import React, { ReactElement, useEffect, useRef } from 'react';
 import { useWindowSize } from '~/hooks';
-import ChevronLeft from '~/icons/ChevronLeft';
-import ChevronRight from '~/icons/ChevronRight';
+import { ChevronLeft, ChevronRight } from '~/icons';
 
 const ArrowLink = ({
   onClick,

@@ -1,6 +1,17 @@
 import { useRoutes } from 'react-router-dom';
 import MainLayout from '~/layouts/Main';
-import { Chapters, ComicDetail, Home, Follow, Search, Activity, Setting } from '~/pages';
+import {
+  Chapters,
+  ComicDetail,
+  Home,
+  Follow,
+  Search,
+  Activity,
+  Setting,
+  Notice,
+  Language,
+  User,
+} from '~/pages';
 import SingleComicLayout from '~/layouts/SingleComic';
 
 const Routes = () => {
@@ -27,6 +38,18 @@ const Routes = () => {
         {
           path: '/setting',
           element: <Setting />,
+        },
+        {
+          path: '/notice',
+          element: <Notice />,
+        },
+        {
+          path: '/language',
+          element: <Language />,
+        },
+        {
+          path: '/user',
+          element: <User />,
         },
         {
           path: ':id',

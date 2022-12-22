@@ -1,18 +1,15 @@
-import React, { useContext, useMemo, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import Home from '~/icons/Home';
-import Activity from '~/icons/Activity';
-import Follow from '~/icons/Follow';
-import Search from '~/icons/Search';
-import Setting from '~/icons/Setting';
+import { Home, Follow, Search, Activity, Setting, Notice, Language, User } from '~/icons';
 import { AppContext } from '~/context/AppContext';
 import { useTranslation } from 'react-i18next';
+import { Avatar, Badge, Space } from 'antd';
 
 const Header = () => {
   const { t } = useTranslation();
-  const [logoName, setLogoName] = useState('/images/logo-black.png');
+  const logoName = '/images/logo.png';
   const location = useLocation();
-
+  const [noticeCount, setNoticeCount] = useState(0);
   const navigate = useNavigate();
   const { resetHomepage, currentPage } = useContext(AppContext);
   const menu = [
@@ -43,16 +40,47 @@ const Header = () => {
     },
   ];
   const onClickSection = (location: string) => {
+    setNoticeCount((current) => current + 1);
     if (location === '/') resetHomepage(currentPage);
     navigate(location);
   };
 
   return (
     <>
-      <div className="z-10 w-full p-2 px-4">
-        <div className="flex w-full items-center justify-center">
-          <div className="w-1/3" onClick={() => onClickSection('/')}>
+      <div className="z-10 w-full p-4 pb-3">
+        <div className="flex w-full">
+          <div className="flex w-1/3 items-center dark:invert" onClick={() => onClickSection('/')}>
             <img src={logoName} alt="" />
+          </div>
+          <div className="flex w-2/3 justify-end">
+            <Space size="large" className="justify-end">
+              <Badge count={noticeCount} overflowCount={9}>
+                <Avatar
+                  shape="square"
+                  size="large"
+                  icon={<Notice />}
+                  className="flex items-center justify-center bg-stone-200 text-orange-700"
+                  onClick={() => {
+                    setNoticeCount(0);
+                    navigate('/notice');
+                  }}
+                />
+              </Badge>
+              <Avatar
+                shape="square"
+                size="large"
+                icon={<Language />}
+                className="flex items-center justify-center bg-stone-200 text-orange-700"
+                onClick={() => navigate('/language')}
+              />
+              <Avatar
+                shape="square"
+                size="large"
+                icon={<User />}
+                className="flex items-center justify-center bg-stone-200 text-orange-700"
+                onClick={() => navigate('/user')}
+              />
+            </Space>
           </div>
         </div>
       </div>
@@ -62,7 +90,7 @@ const Header = () => {
             <div
               key={index}
               className={`flex w-1/5 flex-wrap items-center justify-center  py-2 ${
-                location.pathname === data.location ? 'bg-stone-50 text-orange-800' : 'text-white'
+                location.pathname === data.location ? 'bg-stone-100 text-orange-800' : 'text-white'
               }`}
               onClick={() => {
                 onClickSection(data.location);

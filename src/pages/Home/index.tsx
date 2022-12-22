@@ -4,8 +4,7 @@ import Carousel from '~/components/AutoCarousel';
 import ComicCover from '~/components/ComicCover';
 import { useCallApiOnce } from '~/hooks';
 import { useTranslation } from 'react-i18next';
-import Star from '~/icons/Star';
-import Fire from '~/icons/Fire';
+import { Star, Fire } from '~/icons';
 import Pagination from '~/components/Pagination';
 
 function Home() {
@@ -42,8 +41,6 @@ function Home() {
     },
     [comicsInPage],
   );
-
-  console.log('render');
 
   return (
     <div className="w-100 pt-4 pb-14">

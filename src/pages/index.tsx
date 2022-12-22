@@ -5,3 +5,6 @@ export { default as Follow } from './Follow';
 export { default as Search } from './Search';
 export { default as Activity } from './Activity';
 export { default as Setting } from './Setting';
+export { default as Notice } from './Notice';
+export { default as Language } from './Language';
+export { default as User } from './User';
