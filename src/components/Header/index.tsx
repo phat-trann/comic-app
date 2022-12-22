@@ -50,7 +50,7 @@ const Header = () => {
       <div className="z-10 w-full p-4 pb-3 lg:p-5 lg:px-8">
         <div className="flex w-full">
           <div className="flex w-1/3 items-center dark:invert" onClick={() => onClickSection('/')}>
-            <img src={logoName} alt="" className="w-32" />
+            <img src={logoName} alt="" className="w-32 cursor-pointer" />
           </div>
           <div className="flex  w-2/3 justify-end">
             <Space size="large" className="justify-end">
@@ -59,7 +59,7 @@ const Header = () => {
                   shape="square"
                   size="large"
                   icon={<Notice />}
-                  className="flex items-center justify-center bg-stone-200 text-orange-700"
+                  className="flex cursor-pointer items-center justify-center bg-stone-200 text-orange-700"
                   onClick={() => {
                     setNoticeCount(0);
                     navigate('/notice');
@@ -70,14 +70,14 @@ const Header = () => {
                 shape="square"
                 size="large"
                 icon={<Language />}
-                className="flex items-center justify-center bg-stone-200 text-orange-700"
+                className="flex cursor-pointer items-center justify-center bg-stone-200 text-orange-700"
                 onClick={() => navigate('/language')}
               />
               <Avatar
                 shape="square"
                 size="large"
                 icon={<User />}
-                className="flex items-center justify-center bg-stone-200 text-orange-700"
+                className="flex cursor-pointer items-center justify-center bg-stone-200 text-orange-700"
                 onClick={() => navigate('/user')}
               />
             </Space>
@@ -89,7 +89,7 @@ const Header = () => {
           {menu.map((data, index) => (
             <div
               key={index}
-              className={`flex w-1/5 flex-wrap items-center justify-center  py-2 ${
+              className={`flex w-1/5 cursor-pointer flex-wrap items-center justify-center  py-2 ${
                 location.pathname === data.location ? 'bg-stone-100 text-orange-800' : 'text-white'
               }`}
               onClick={() => {

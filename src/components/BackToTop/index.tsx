@@ -17,7 +17,7 @@ const BackToTop = () => {
 
   return showBackToTop ? (
     <div
-      className="fixed bottom-16 right-4 z-10 text-orange-600 border rounded p-2 "
+      className="fixed bottom-16 right-4 z-10 cursor-pointer rounded border p-2 text-orange-600"
       onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
     >
       <ChevronUp />
