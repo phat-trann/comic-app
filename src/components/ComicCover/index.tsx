@@ -11,7 +11,7 @@ const TitleInside: React.FC<{ className: string; name?: string }> = ({ className
   const { t } = useTranslation();
   return (
     <div
-      className={`absolute bottom-0 h-7 w-full bg-gradient-to-b from-transparent to-gray-900 text-white ${className}`}
+      className={`absolute bottom-0 h-7 w-full overflow-hidden rounded-b-lg bg-gradient-to-b from-transparent to-gray-900 text-white ${className}`}
     >
       <p className="w-full px-1 text-center line-clamp-1">{name || t('common.loading')}</p>
     </div>
@@ -58,9 +58,11 @@ const ComicCover: React.FC<{
 
   return (
     <div className="overflow-hidden rounded-lg">
-      <Link to={`/${comicData?.hashName || ''}`}>
-        <div className={`relative flex items-center justify-center overflow-hidden ${imageClass}`}>
-          {comicData ? (
+      {comicData ? (
+        <Link to={`/${comicData?.hashName || ''}`}>
+          <div
+            className={`relative flex items-center justify-center overflow-hidden ${imageClass}`}
+          >
             <LazyLoadImage
               alt={comicData?.name}
               src={changeWidthImageUrl(comicData.avatar, avatarSize || 400)}
@@ -73,12 +75,19 @@ const ComicCover: React.FC<{
               threshold={240}
               className="h-full w-full object-cover"
             />
-          ) : (
-            <ImageSkeleton className="h-full w-full" />
-          )}
-          {!showNewest && <TitleInside name={comicData?.name} className={titleClass} />}
-        </div>
-      </Link>
+            {!showNewest && <TitleInside name={comicData?.name} className={titleClass} />}
+          </div>
+        </Link>
+      ) : (
+        <>
+          <div
+            className={`relative flex items-center justify-center overflow-hidden rounded-lg ${imageClass}`}
+          >
+            <ImageSkeleton className="h-full w-full overflow-hidden rounded-lg" />
+            {!showNewest && <TitleInside className={titleClass} />}
+          </div>
+        </>
+      )}
       {showNewest && (
         <Link to={`/${lastChapter?.hashName || ''}`}>
           <TitleOutside lastChapter={lastChapter} name={comicData?.name} className={titleClass} />
