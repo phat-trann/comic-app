@@ -6,7 +6,6 @@ const BackToTop = () => {
 
   useEffect(() => {
     const handleScrollWindow = () => {
-      console.log(window.scrollY);
       if (window.scrollY > 140) setShowBackToTop(true);
       else setShowBackToTop(false);
     };

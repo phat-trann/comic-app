@@ -18,7 +18,7 @@ const Footer = () => {
       <div className="flex flex-wrap p-4">
         <div className="flex w-full py-2">
           <div className="flex w-1/3 items-center dark:invert" onClick={() => onClickSection('/')}>
-            <img src={logoName} alt="" />
+            <img src={logoName} alt="" className="w-32" />
           </div>
         </div>
         <div className="w-full">

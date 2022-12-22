@@ -47,12 +47,12 @@ const Header = () => {
 
   return (
     <>
-      <div className="z-10 w-full p-4 pb-3">
+      <div className="z-10 w-full p-4 pb-3 lg:p-5 lg:px-8">
         <div className="flex w-full">
           <div className="flex w-1/3 items-center dark:invert" onClick={() => onClickSection('/')}>
-            <img src={logoName} alt="" />
+            <img src={logoName} alt="" className="w-32" />
           </div>
-          <div className="flex w-2/3 justify-end">
+          <div className="flex  w-2/3 justify-end">
             <Space size="large" className="justify-end">
               <Badge count={noticeCount} overflowCount={9}>
                 <Avatar
@@ -84,7 +84,7 @@ const Header = () => {
           </div>
         </div>
       </div>
-      <div className="z-10 w-full bg-orange-600 px-4">
+      <div className="z-10 w-full bg-orange-600 px-4 lg:px-8">
         <div className="flex w-full items-center">
           {menu.map((data, index) => (
             <div
