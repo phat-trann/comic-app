@@ -26,7 +26,12 @@ const ComicDetail = () => {
             <p className="">Artists: {currentComic.artists.join(', ')}</p>
             <p className="">Authors: {currentComic.authors.join(', ')}</p>
             <p className="">Description: {currentComic.description}</p>
-            <p className="">Category: {currentComic.category.join(', ')}</p>
+            <p className="">
+              <span>Category: </span>
+              {currentComic.category.map((el: any) => (
+                <Link to={`/category/${el.key}`}>{el.name}, </Link>
+              ))}
+            </p>
             <p className="">Status: {currentComic.isDone ? 'Done' : 'In Progress'}</p>
             <p className="">Views: {formatView(currentComic.views)}</p>
             <p className="">Followers: {currentComic.followers}</p>

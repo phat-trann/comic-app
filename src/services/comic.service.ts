@@ -21,7 +21,7 @@ const getMostViewedComics = (limit: number) => {
   return searchComic({ limit, sort: 'views', sortType: 'desc' });
 };
 const getComicDetail = async (id: string): Promise<{ data: comicDataType; error: boolean }> => {
-  const res = await api.get(`/comic/${id}`);
+  const res = await api.get(`/comic/get/${id}`);
 
   return res.data;
 };
