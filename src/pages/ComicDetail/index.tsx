@@ -1,6 +1,11 @@
 import { useContext } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { changeWidthImageUrl, diffDate, formatView } from '~/common/helpers/formatData';
+import {
+  changeWidthImageUrl,
+  diffDate,
+  formatRating,
+  formatView,
+} from '~/common/helpers/formatData';
 import { ComicContext } from '~/context/ComicContext';
 import { useCallApiOnce } from '~/hooks';
 import { useTranslation } from 'react-i18next';
@@ -33,6 +38,7 @@ const ComicDetail = () => {
               ))}
             </p>
             <p className="">Status: {currentComic.isDone ? 'Done' : 'In Progress'}</p>
+            <p className="">Rates: {formatRating(currentComic.voteSum, currentComic.voteCount)}</p>
             <p className="">Views: {formatView(currentComic.views)}</p>
             <p className="">Followers: {currentComic.followers}</p>
             <p className="">Chapters: {currentComic.chapters.length}</p>

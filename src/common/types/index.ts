@@ -26,4 +26,7 @@ export interface comicDataType {
   chapters: Array<chapterType>;
   chaptersLength: number;
   lastUpload: number;
+  likes: number;
+  voteCount: number;
+  voteSum: number;
 }
