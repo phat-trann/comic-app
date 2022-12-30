@@ -30,7 +30,7 @@ const getChapterDetail = async (
   id: string,
   chap: string,
 ): Promise<{ data: chapterDetailType; error: boolean }> => {
-  const res = await api.get(`/comic/${id}/${chap}`);
+  const res = await api.get(`/chapters/get/${id}/${chap}`);
 
   return res.data;
 };
