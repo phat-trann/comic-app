@@ -13,12 +13,12 @@ const MainLayout = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <AppContextProvider>
-        <div className="dark:bg-slate-900">
+        <>
           <Header />
           <Outlet />
           <BackToTop />
           <Footer />
-        </div>
+        </>
       </AppContextProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
