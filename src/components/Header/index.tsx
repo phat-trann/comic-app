@@ -1,9 +1,20 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Home, Follow, Search, Activity, Setting, Notice, Language, User } from '~/icons';
-import { AppContext } from '~/context/AppContext';
 import { useTranslation } from 'react-i18next';
 import { Avatar, Badge, Space } from 'antd';
+
+const IconHeader: React.FC<{ icon: JSX.Element; onClick: () => void }> = ({ icon, onClick }) => {
+  return (
+    <Avatar
+      shape="square"
+      size="large"
+      icon={icon}
+      className="flex cursor-pointer items-center justify-center bg-stone-200 text-orange-700"
+      onClick={onClick}
+    />
+  );
+};
 
 const Header = () => {
   const { t } = useTranslation();
@@ -11,7 +22,6 @@ const Header = () => {
   const location = useLocation();
   const [noticeCount, setNoticeCount] = useState(0);
   const navigate = useNavigate();
-  const { resetHomepage, currentPage } = useContext(AppContext);
   const menu = [
     {
       text: t('menu.home'),
@@ -40,8 +50,7 @@ const Header = () => {
     },
   ];
   const onClickSection = (location: string) => {
-    setNoticeCount((current) => current + 1);
-    if (location === '/') resetHomepage(currentPage);
+    // setNoticeCount((current) => current + 1);
     navigate(location);
   };
 
@@ -52,34 +61,19 @@ const Header = () => {
           <div className="flex w-1/3 items-center dark:invert" onClick={() => onClickSection('/')}>
             <img src={logoName} alt="" className="w-32 cursor-pointer" />
           </div>
-          <div className="flex  w-2/3 justify-end">
+          <div className="flex w-2/3 justify-end">
             <Space size="large" className="justify-end">
               <Badge count={noticeCount} overflowCount={9}>
-                <Avatar
-                  shape="square"
-                  size="large"
+                <IconHeader
                   icon={<Notice />}
-                  className="flex cursor-pointer items-center justify-center bg-stone-200 text-orange-700"
                   onClick={() => {
                     setNoticeCount(0);
                     navigate('/notice');
                   }}
                 />
               </Badge>
-              <Avatar
-                shape="square"
-                size="large"
-                icon={<Language />}
-                className="flex cursor-pointer items-center justify-center bg-stone-200 text-orange-700"
-                onClick={() => navigate('/language')}
-              />
-              <Avatar
-                shape="square"
-                size="large"
-                icon={<User />}
-                className="flex cursor-pointer items-center justify-center bg-stone-200 text-orange-700"
-                onClick={() => navigate('/user')}
-              />
+              <IconHeader icon={<Language />} onClick={() => navigate('/language')} />
+              <IconHeader icon={<User />} onClick={() => navigate('/user')} />
             </Space>
           </div>
         </div>
