@@ -54,7 +54,16 @@ const ComicCover: React.FC<{
   comicData: comicDataType | null;
   showNewest?: boolean;
   scrollPosition?: { x: number; y: number };
-}> = ({ imageClass, titleClass, comicData, avatarSize, showNewest = false, scrollPosition }) => {
+  beforeLeave?: () => void;
+}> = ({
+  imageClass,
+  titleClass,
+  comicData,
+  avatarSize,
+  showNewest = false,
+  scrollPosition,
+  beforeLeave,
+}) => {
   const lastChapter = comicData?.chapters
     ? comicData?.chapters[comicData.chapters.length - 1]
     : comicData?.lastChapter;
@@ -62,7 +71,10 @@ const ComicCover: React.FC<{
   return (
     <div className="overflow-hidden rounded-lg">
       {comicData ? (
-        <Link to={`/${comicData?.hashName || ''}`}>
+        <Link
+          to={`/${comicData?.hashName || ''}`}
+          onClick={() => comicData?.hashName && beforeLeave?.()}
+        >
           <div
             className={`relative flex items-center justify-center overflow-hidden ${imageClass}`}
           >
@@ -93,7 +105,10 @@ const ComicCover: React.FC<{
         </>
       )}
       {showNewest && (
-        <Link to={`/${lastChapter?.hashName || ''}`}>
+        <Link
+          to={`/${lastChapter?.hashName || ''}`}
+          onClick={() => lastChapter?.hashName && beforeLeave?.()}
+        >
           <TitleOutside lastChapter={lastChapter} name={comicData?.name} className={titleClass} />
         </Link>
       )}
