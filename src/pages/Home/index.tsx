@@ -20,7 +20,6 @@ const Home = () => {
       {
         queryKey: ['home', 'count'],
         queryFn: async () => await getComicsCount(),
-        cacheTime: Infinity,
         refetchOnWindowFocus: false,
       },
       {

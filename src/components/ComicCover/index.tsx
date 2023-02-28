@@ -80,13 +80,13 @@ const ComicCover: React.FC<{
           >
             <LazyLoadImage
               alt={comicData?.name}
-              src={changeWidthImageUrl(comicData.avatar, avatarSize || 400)}
-              placeholder={
-                <img
-                  src={changeWidthImageUrl(comicData.avatar, 10)}
-                  className="h-full w-full object-cover"
-                />
-              }
+              src={changeWidthImageUrl(comicData.avatar, avatarSize || 200)}
+              // placeholder={
+              //   <img
+              //     src={changeWidthImageUrl(comicData.avatar, 10)}
+              //     className="h-full w-full object-cover"
+              //   />
+              // }
               threshold={200}
               className="h-full w-full object-cover"
               scrollPosition={scrollPosition}
