@@ -1,4 +1,5 @@
 export interface chapterType {
+  _id: number;
   name: string;
   updateDate: number;
   views: number;
@@ -6,7 +7,6 @@ export interface chapterType {
 }
 
 export interface chapterDetailType extends chapterType {
-  _id: number;
   images: Array<string>;
 }
 

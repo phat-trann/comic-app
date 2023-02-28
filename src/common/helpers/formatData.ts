@@ -38,7 +38,7 @@ const changeWidthImageUrl = (currentUrl: string, width: number) => {
 };
 
 const formatRating = (voteSum: number, voteCount: number) => {
-  return Math.floor((voteSum / voteCount) * 10) / 10;
+  return Math.floor((voteSum / voteCount) * 2) / 2;
 };
 
 export { diffDate, formatView, changeWidthImageUrl, formatRating };
