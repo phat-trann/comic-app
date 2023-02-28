@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useLocation, useSearchParams, useNavigate } from 'react-router-dom';
 
 const useCacheParams = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -14,12 +14,18 @@ const useCacheParams = () => {
 
     setSearchParams(currentParams);
   }, []);
+
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  console.log(location);
+
   const getSearchParams = useCallback((key: string) => {
     return searchParams.get(key) || '';
   }, []);
 
   useEffect(() => {
-    setSearchParams({});
+    navigate(location.pathname, { replace: true });
   }, []);
 
   return [getSearchParams, setParams] as const;

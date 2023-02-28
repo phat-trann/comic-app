@@ -15,8 +15,8 @@ import { useCacheParams } from '~/hooks';
 
 const ComicDetail = () => {
   const { id } = useParams();
-  // const [searchParams, setSearchParams] = useCacheParams();
-  // const firstLoad = searchParams('firstLoad');
+  const [searchParams] = useCacheParams();
+  const firstLoad = searchParams('firstLoad');
   const { t } = useTranslation();
   const { data: currentComic } = useQuery({
     queryKey: ['comic', id],
@@ -25,10 +25,9 @@ const ComicDetail = () => {
     enabled: !!id,
   });
 
-  // if (firstLoad) {
-  //   window.scrollTo(0, 0);
-  //   setSearchParams({});
-  // }
+  if (firstLoad) {
+    window.scrollTo(0, 0);
+  }
 
   if (currentComic?.error) return <div>{t('common.error')}</div>;
 
