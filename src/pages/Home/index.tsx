@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { Star, Fire } from '~/icons';
 import Pagination from '~/components/Pagination';
 
-function Home() {
+const Home = () => {
   const {
     comics: currentComics,
     mostViewedComics,
@@ -70,10 +70,15 @@ function Home() {
             <Carousel
               dataList={mostViewedComics}
               autoScroll={true}
-              render={([comic, index, defaultClass]) => (
+              render={([comic, index, defaultClass, scrollPosition]) => (
                 <div key={comic?._id || index} className={defaultClass + 'w-1/3 sm:w-1/4 md:w-1/5'}>
                   <div className="w-full p-1 lg:p-0 lg:px-3">
-                    <ComicCover comicData={comic} imageClass="h-52 lg:h-60" titleClass="" />
+                    <ComicCover
+                      comicData={comic}
+                      imageClass="h-52 lg:h-60"
+                      titleClass=""
+                      scrollPosition={scrollPosition}
+                    />
                   </div>
                 </div>
               )}
@@ -117,6 +122,6 @@ function Home() {
       </div>
     </div>
   );
-}
+};
 
 export default Home;

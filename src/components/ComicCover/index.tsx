@@ -53,7 +53,8 @@ const ComicCover: React.FC<{
   avatarSize?: number;
   comicData: comicDataType | null;
   showNewest?: boolean;
-}> = ({ imageClass, titleClass, comicData, avatarSize, showNewest = false }) => {
+  scrollPosition?: { x: number; y: number };
+}> = ({ imageClass, titleClass, comicData, avatarSize, showNewest = false, scrollPosition }) => {
   const lastChapter = comicData?.chapters
     ? comicData?.chapters[comicData.chapters.length - 1]
     : comicData?.lastChapter;
@@ -74,8 +75,9 @@ const ComicCover: React.FC<{
                   className="h-full w-full object-cover"
                 />
               }
-              threshold={500}
+              threshold={200}
               className="h-full w-full object-cover"
+              scrollPosition={scrollPosition}
             />
             {!showNewest && <TitleInside name={comicData?.name} className={titleClass} />}
           </div>

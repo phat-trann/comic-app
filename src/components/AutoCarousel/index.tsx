@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useRef } from 'react';
+import React, { ReactElement, useEffect, useRef, useState } from 'react';
 import { useWindowSize } from '~/hooks';
 import { ChevronLeft, ChevronRight } from '~/icons';
 
@@ -28,7 +28,7 @@ const Carousel = <T,>({
   autoScrollTime = 2,
 }: {
   dataList: T[];
-  render: (arg: [T, number, string]) => ReactElement;
+  render: (arg: [T, number, string, { x: number; y: number }]) => ReactElement;
   autoScroll?: boolean;
   autoScrollTime?: number;
 }) => {
@@ -36,6 +36,10 @@ const Carousel = <T,>({
   const isTrigger = useRef<boolean>(false);
   const [windowSize, currentBreakPoint, breakPointConfig] = useWindowSize();
   const isMobile = currentBreakPoint < breakPointConfig['md'];
+  const [scrollPosition, setScrollPosition] = useState({
+    x: carousel.current?.scrollLeft || 0,
+    y: carousel.current?.scrollTop || 0,
+  });
 
   const scrollCarousel = (width: number) => {
     if (carousel.current) {
@@ -79,6 +83,22 @@ const Carousel = <T,>({
     }
   }, [dataList, windowSize.width]);
 
+  useEffect(() => {
+    const updateScrollPosition = () => {
+      setScrollPosition({
+        x: carousel.current?.scrollLeft || 0,
+        y: carousel.current?.scrollTop || 0,
+      });
+    };
+
+    if (carousel && carousel.current) {
+      carousel.current.addEventListener('scroll', updateScrollPosition, false);
+      return () => {
+        carousel?.current?.removeEventListener('scroll', updateScrollPosition, false);
+      };
+    }
+  }, []);
+
   return (
     <div className="relative flex w-full flex-wrap">
       <div
@@ -87,7 +107,9 @@ const Carousel = <T,>({
         onWheel={disableAuto}
         onTouchMove={disableAuto}
       >
-        {dataList.map((comic: T, index: number) => render([comic, index, 'carousel-item ']))}
+        {dataList.map((comic: T, index: number) =>
+          render([comic, index, 'carousel-item ', scrollPosition]),
+        )}
       </div>
       <div className="pointer-events-none absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
         <ArrowLink isMobile={isMobile} isForward={true} onClick={triggerScroll}>
