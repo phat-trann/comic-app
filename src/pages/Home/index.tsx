@@ -21,6 +21,7 @@ const Home = () => {
         queryKey: ['home', 'count'],
         queryFn: async () => await getComicsCount(),
         cacheTime: Infinity,
+        refetchOnWindowFocus: false,
       },
       {
         queryKey: ['home', 'most-viewed'],
@@ -29,8 +30,9 @@ const Home = () => {
         refetchOnWindowFocus: false,
       },
       {
-        queryKey: ['home', 'current-comic', comicsInPage * (currentPage - 1)],
-        queryFn: async () => getNewUploadComic(comicsInPage, comicsInPage * (currentPage - 1)),
+        queryKey: ['home', 'current-comic', currentPage],
+        queryFn: async () => getNewUploadComic(comicsInPage, currentPage),
+        refetchOnWindowFocus: false,
       },
     ],
   });

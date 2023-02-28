@@ -13,8 +13,13 @@ const searchComic = async (paramSearch: {
   return res.data;
 };
 
-const getNewUploadComic = (limit: number, skip: number = 0) => {
-  return searchComic({ limit, sort: 'lastUpload', sortType: 'desc', skip });
+const getNewUploadComic = (limit: number, page: number = 1) => {
+  return searchComic({
+    limit,
+    sort: 'lastUpload',
+    sortType: 'desc',
+    skip: limit * (page - 1),
+  });
 };
 
 const getMostViewedComics = (limit: number) => {
