@@ -3,30 +3,31 @@ import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { useParams } from 'react-router-dom';
 import { changeWidthImageUrl } from '~/common/helpers/formatData';
 import ImageSkeleton from '~/components/ImageSkeleton';
-import { ComicContext } from '~/context/ComicContext';
-import { useCallApiOnce, useWindowSize } from '~/hooks';
+import { useWindowSize } from '~/hooks';
 import { useTranslation } from 'react-i18next';
+import { useQuery } from '@tanstack/react-query';
+import { getChapterDetail } from '~/services/comic.service';
 
 const Chapters = () => {
-  let { id, chap } = useParams();
-  if (!id) id = '';
-  if (!chap) chap = '';
+  const { id, chap } = useParams();
   const { t } = useTranslation();
   const [{ height }] = useWindowSize();
   const [showFirstLoading, setShowFirstLoading] = useState(true);
-  const { chapters, getChapter } = useContext(ComicContext);
-  const { data, loading, error } = useCallApiOnce(
-    async () => await getChapter(id, chap),
-    [chapters[chap]],
-  );
-  const currentChapter = useMemo(() => chapters[chap as string], [chapters[chap]]);
-  const images = useMemo(() => currentChapter?.images, [currentChapter]);
 
-  if (error?.error || data?.error) return <p>{error?.message || t('common.error')}</p>;
+  const { data: currentChapter } = useQuery({
+    queryKey: ['chapter', id, chap],
+    queryFn: async () => await getChapterDetail(id || '', chap || ''),
+    refetchOnWindowFocus: false,
+    enabled: !!id,
+  });
+
+  const images = useMemo(() => currentChapter?.data?.images, [currentChapter?.data]);
+
+  if (currentChapter?.error) return <p>{t('common.error')}</p>;
 
   return (
     <>
-      {loading || !currentChapter || !images?.length ? (
+      {!images?.length ? (
         <p>Loading</p>
       ) : (
         <>

@@ -12,7 +12,6 @@ import {
   Language,
   User,
 } from '~/pages';
-import SingleComicLayout from '~/layouts/SingleComic';
 
 const Routes = () => {
   return useRoutes([
@@ -53,7 +52,6 @@ const Routes = () => {
         },
         {
           path: ':id',
-          element: <SingleComicLayout />,
           children: [
             { path: '', element: <ComicDetail /> },
             {

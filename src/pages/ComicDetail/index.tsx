@@ -1,4 +1,3 @@
-import { useContext } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import {
   changeWidthImageUrl,
@@ -6,45 +5,51 @@ import {
   formatRating,
   formatView,
 } from '~/common/helpers/formatData';
-import { ComicContext } from '~/context/ComicContext';
-import { useCallApiOnce } from '~/hooks';
 import { useTranslation } from 'react-i18next';
+import { useQuery } from '@tanstack/react-query';
+import { getComicDetail } from '~/services/comic.service';
 
 const ComicDetail = () => {
   const { id } = useParams();
   const { t } = useTranslation();
-  const { comic: currentComic, fetchData } = useContext(ComicContext);
-  const { data, loading, error } = useCallApiOnce(async () => await fetchData(id), [currentComic]);
+  const { data: currentComic } = useQuery({
+    queryKey: ['comic', id],
+    queryFn: async () => await getComicDetail(id || ''),
+    refetchOnWindowFocus: false,
+    enabled: !!id,
+  });
 
-  if (error?.error || data?.error) return <div>{error?.message || t('common.error')}</div>;
+  if (currentComic?.error) return <div>{t('common.error')}</div>;
 
   return (
     <div className="">
-      {loading || !currentComic ? (
+      {!currentComic?.data ? (
         <p>Loading</p>
       ) : (
         <div className="">
           <div>
-            <img src={changeWidthImageUrl(currentComic.avatar, 500)} className="" />
-            <p className="">Name: {currentComic.name}</p>
-            <p className="">Another name: {currentComic.anotherName.join(', ')}</p>
-            <p className="">Artists: {currentComic.artists.join(', ')}</p>
-            <p className="">Authors: {currentComic.authors.join(', ')}</p>
-            <p className="">Description: {currentComic.description}</p>
+            <img src={changeWidthImageUrl(currentComic.data.avatar, 500)} className="" />
+            <p className="">Name: {currentComic.data.name}</p>
+            <p className="">Another name: {currentComic.data.anotherName.join(', ')}</p>
+            <p className="">Artists: {currentComic.data.artists.join(', ')}</p>
+            <p className="">Authors: {currentComic.data.authors.join(', ')}</p>
+            <p className="">Description: {currentComic.data.description}</p>
             <p className="">
               <span>Category: </span>
-              {currentComic.category.map((el: any) => (
+              {currentComic.data.category.map((el: any) => (
                 <Link to={`/category/${el.key}`} key={el.key}>
                   {el.name},{' '}
                 </Link>
               ))}
             </p>
-            <p className="">Status: {currentComic.isDone ? 'Done' : 'In Progress'}</p>
-            <p className="">Rates: {formatRating(currentComic.voteSum, currentComic.voteCount)}</p>
-            <p className="">Views: {formatView(currentComic.views)}</p>
-            <p className="">Followers: {currentComic.followers}</p>
-            <p className="">Chapters: {currentComic.chapters.length}</p>
-            {currentComic.chapters.map((ell: any, index: number) => (
+            <p className="">Status: {currentComic.data.isDone ? 'Done' : 'In Progress'}</p>
+            <p className="">
+              Rates: {formatRating(currentComic.data.voteSum, currentComic.data.voteCount)}
+            </p>
+            <p className="">Views: {formatView(currentComic.data.views)}</p>
+            <p className="">Followers: {currentComic.data.followers}</p>
+            <p className="">Chapters: {currentComic.data.chapters.length}</p>
+            {currentComic.data.chapters.map((ell: any, index: number) => (
               <div key={ell._id + String(index)}>
                 <Link to={`/${ell.hashName}`} className="">
                   {ell.name} - {formatView(ell.views)} - {diffDate(ell.updateDate, Date.now())}
