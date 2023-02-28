@@ -34,7 +34,10 @@ const Chapters = () => {
             <div className="w-96">
               {showFirstLoading && <ImageSkeleton className="h-screen w-full" />}
               {images.map((el: any, index: any) => (
-                <div key={el._id} className="flex [&>.lazy-load-image-loaded]:!h-fit">
+                <div
+                  key={el._id + String(index)}
+                  className="flex [&>.lazy-load-image-loaded]:!h-fit"
+                >
                   <LazyLoadImage
                     src={changeWidthImageUrl(el, 384)}
                     placeholder={<img src={changeWidthImageUrl(el, 10)} className="w-full" />}

@@ -23,7 +23,7 @@ const ComicDetail = () => {
       {loading || !currentComic ? (
         <p>Loading</p>
       ) : (
-        <div key={currentComic._id} className="">
+        <div className="">
           <div>
             <img src={changeWidthImageUrl(currentComic.avatar, 500)} className="" />
             <p className="">Name: {currentComic.name}</p>
@@ -34,7 +34,9 @@ const ComicDetail = () => {
             <p className="">
               <span>Category: </span>
               {currentComic.category.map((el: any) => (
-                <Link to={`/category/${el.key}`}>{el.name}, </Link>
+                <Link to={`/category/${el.key}`} key={el.key}>
+                  {el.name},{' '}
+                </Link>
               ))}
             </p>
             <p className="">Status: {currentComic.isDone ? 'Done' : 'In Progress'}</p>
@@ -42,8 +44,8 @@ const ComicDetail = () => {
             <p className="">Views: {formatView(currentComic.views)}</p>
             <p className="">Followers: {currentComic.followers}</p>
             <p className="">Chapters: {currentComic.chapters.length}</p>
-            {currentComic.chapters.map((ell: any) => (
-              <div key={ell._id}>
+            {currentComic.chapters.map((ell: any, index: number) => (
+              <div key={ell._id + String(index)}>
                 <Link to={`/${ell.hashName}`} className="">
                   {ell.name} - {formatView(ell.views)} - {diffDate(ell.updateDate, Date.now())}
                 </Link>
