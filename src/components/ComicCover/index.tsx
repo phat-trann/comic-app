@@ -54,7 +54,9 @@ const ComicCover: React.FC<{
   comicData: comicDataType | null;
   showNewest?: boolean;
 }> = ({ imageClass, titleClass, comicData, avatarSize, showNewest = false }) => {
-  const lastChapter = comicData?.chapters[comicData.chapters.length - 1];
+  const lastChapter = comicData?.chapters
+    ? comicData?.chapters[comicData.chapters.length - 1]
+    : comicData?.lastChapter;
 
   return (
     <div className="overflow-hidden rounded-lg">

@@ -6,8 +6,8 @@ export interface chapterType {
 }
 
 export interface chapterDetailType extends chapterType {
-  _id: number,
-  images: Array<string>
+  _id: number;
+  images: Array<string>;
 }
 
 export interface comicDataType {
@@ -29,4 +29,5 @@ export interface comicDataType {
   likes: number;
   voteCount: number;
   voteSum: number;
+  lastChapter: chapterType;
 }
