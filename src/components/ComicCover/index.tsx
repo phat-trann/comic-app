@@ -72,7 +72,7 @@ const ComicCover: React.FC<{
                   className="h-full w-full object-cover"
                 />
               }
-              threshold={240}
+              threshold={500}
               className="h-full w-full object-cover"
             />
             {!showNewest && <TitleInside name={comicData?.name} className={titleClass} />}
