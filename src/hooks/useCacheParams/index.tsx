@@ -17,9 +17,6 @@ const useCacheParams = () => {
 
   const location = useLocation();
   const navigate = useNavigate();
-
-  console.log(location);
-
   const getSearchParams = useCallback((key: string) => {
     return searchParams.get(key) || '';
   }, []);

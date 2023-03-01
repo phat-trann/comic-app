@@ -1,17 +1,13 @@
 import { Link, useParams } from 'react-router-dom';
-import {
-  changeWidthImageUrl,
-  diffDate,
-  formatRating,
-  formatView,
-} from '~/common/helpers/formatData';
+import { changeWidthImageUrl, formatRating, formatView } from '~/common/helpers/formatData';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import { getComicDetail } from '~/services/comic.service';
 import ImageSkeleton from '~/components/ImageSkeleton';
 import { Rate } from 'antd';
-import { chapterType } from '~/common/types';
 import { useCacheParams } from '~/hooks';
+import ColumnTable from './ComicTable';
+import { useMemo } from 'react';
 
 const ComicDetail = () => {
   const { id } = useParams();
@@ -24,6 +20,10 @@ const ComicDetail = () => {
     refetchOnWindowFocus: false,
     enabled: !!id,
   });
+  const chapters = useMemo(() => {
+    if (!currentComic?.data?.chapters) return [];
+    return [...currentComic.data.chapters].reverse();
+  }, [currentComic?.data?.chapters]);
 
   if (firstLoad) {
     window.scrollTo(0, 0);
@@ -47,8 +47,8 @@ const ComicDetail = () => {
             )}
             <ImageSkeleton className="absolute z-0 h-full w-full overflow-hidden rounded-lg" />
           </div>
-          <div>
-            <div className="mb-10">
+          <div className="w-full">
+            <div className="mb-7">
               <div className="font-bold">
                 {currentComic?.data?.anotherName.join(', ') || t('common.loading')}
               </div>
@@ -98,21 +98,15 @@ const ComicDetail = () => {
                   </button>
                 </div>
               </div>
-              <div className="mt-3 flex flex-wrap">
+              <div className="mt-3 flex w-full flex-wrap">
                 <p className="mb-1 font-bold">Description:</p>
                 <div>{currentComic?.data?.description}</div>
               </div>
-              <div className="mx-7 border-b-2 pt-10"></div>
+              <div className="mx-5 border-b-2 pt-10"></div>
             </div>
             <div>
-              {currentComic?.data?.chapters.map((chapter: chapterType, index: number) => (
-                <div key={chapter._id + String(index)}>
-                  <Link to={`/${chapter.hashName}`}>
-                    {chapter.name} - {formatView(chapter.views)} -{' '}
-                    {diffDate(chapter.updateDate, Date.now())}
-                  </Link>
-                </div>
-              ))}
+              <p className="mb-1 font-bold">Chapters:</p>
+              <ColumnTable data={chapters} />
             </div>
           </div>
         </div>

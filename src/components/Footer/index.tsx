@@ -6,7 +6,7 @@ const Footer = () => {
   const { t } = useTranslation();
 
   return (
-    <div className="border-t-8 border-orange-600 bg-white">
+    <div className="border-t-8 border-orange-600 bg-stone-100">
       <div className="flex flex-wrap p-4">
         <div className="flex w-full py-2">
           <div className="flex w-1/3 items-center">
